@@ -1,0 +1,28 @@
+[workspace]
+members = ["packages/main-ui"]
+exclude = ["deps"]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.0"
+authors = ["Biyard"]
+description = "d.AGIT: Digital Assets Guardianship & Interchange Terminal"
+documentation = "https://dagit.club"
+edition = "2021"
+repository = "https://github.com/biyard/dagit"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+dioxus = { version = "0.6.3", features = ["router", "fullstack"] }
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
