@@ -1,5 +1,5 @@
 [workspace]
-members = ["packages/main-ui"]
+members = ["packages/api", "packages/main-ui"]
 exclude = ["deps"]
 resolver = "2"
 
