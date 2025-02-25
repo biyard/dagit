@@ -11,11 +11,15 @@ use crate::pages::prelude::*;
 #[rustfmt::skip]
 pub enum Route {
     #[nest("/:lang")]
+        #[route("/platform")]
+        PlatformPage { lang : Language},
         #[layout(RootLayout)]
             #[route("/")]
             MainPage { lang: Language },
         #[end_layout]
+
     #[end_nest]
+    
     #[redirect("/", || Route::MainPage { lang: Language::Ko })]
     #[route("/:..route")]
     NotFoundPage {
