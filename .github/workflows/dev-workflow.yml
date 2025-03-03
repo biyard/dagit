@@ -108,6 +108,7 @@ jobs:
           SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BASE_DOMAIN: dagit.club
           DOMAIN: api.dev.dagit.club
+          ENABLE_S3: false
           ENABLE_LAMBDA: true
 
           # app setup
