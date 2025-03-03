@@ -115,6 +115,9 @@ jobs:
           ENV: dev
           RUST_LOG: debug
           SERVICE: api
+          DATABASE_TYPE: postgres
+          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
+
         run: |
           npm i -g aws-cdk @tailwindcss/cli
           make deploy
