@@ -1,20 +1,24 @@
 #![allow(unused)]
+use super::i18n::*;
 use dioxus::prelude::*;
 use dioxus_logger::tracing;
 use dioxus_translate::*;
 
 #[component]
 pub fn PlatformPage(lang: Language) -> Element {
+
+    let tr: PlatformTranslate = translate(&lang);
+
     rsx! {
         div {
-            class: "min-h-screen text-white flex flex-col bg-gradient-to-b from-[#000000] to-[#1A1A1A]",
+            class: "flex flex-col h-full text-white bg-gradient-to-b from-[#000000] to-[#1A1A1A]",
 
             nav {
                 class: "flex items-center justify-between px-8 py-4",
 
                 h1 {
                     class: "text-2xl font-bold",
-                    "d.AGIT"
+                    "{tr.d_agit}"
                 }
 
                 div {
@@ -22,24 +26,24 @@ pub fn PlatformPage(lang: Language) -> Element {
                     a {
                         class: "hover:text-[#30D4A0]",
                         href: "#solution",
-                        "Solution"
+                        "{tr.solution}"
                     }
                     a {
                         class: "hover:text-[#30D4A0]",
                         href: "#pricing",
-                        "Pricing"
+                        "{tr.pricing}"
                     }
                     a {
                         class: "hover:text-[#30D4A0]",
                         href: "#faq",
-                        "FAQ"
+                        "{tr.faq}"
                     }
                 }
 
                 a {
                     class: "hover:text-[#30D4A0]",
                     href: "#login",
-                    "Login"
+                    "{tr.login}"
                 }
             }
 
@@ -48,22 +52,22 @@ pub fn PlatformPage(lang: Language) -> Element {
 
                 h2 {
                     class: "text-4xl md:text-6xl font-extrabold mb-4",
-                    "d.AGIT"
+                    "{tr.d_agit}"
                 }
 
                 p {
                     class: "text-4xl md:text-4xl max-w-6xl mb-6",
-                    "Blockchain-based artwork certificates, seamless data management, digital gallery solutions."
+                    "{tr.description}"
                 }
 
                 p {
                     class: "text-md md:text-lg max-w-xl mb-8",
-                    "Let's unlock new possibilities with your own Agit today!"
+                    "{tr.unlock_possibilities}"
                 }
 
                 button {
                     class: "bg-[#30D4A0] text-black px-6 py-3 rounded-sm font-semibold hover:bg-gray-400 transition",
-                    "Build your Agit"
+                    "{tr.build_agit}"
                 }
             }
         }
