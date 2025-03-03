@@ -24,7 +24,6 @@ setup.tool:
 	cargo install cargo-binstall
 	cargo binstall dioxus-cli
 	cargo binstall toml-cli
-	npm install tailwindcss @tailwindcss/cli
 
 run:
 	$(BUILD_ENV) dx serve
@@ -32,7 +31,10 @@ run:
 clean:
 	rm -rf assets/tailwind.css
 
-public/tailwind.css:
+node_modules:
+	npm i
+
+public/tailwind.css: node_modules
 	npx @tailwindcss/cli -i $(PWD)/input.css -o $(PWD)/assets/tailwind.css
 
 build: clean public/tailwind.css
