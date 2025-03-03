@@ -22,3 +22,5 @@ target/
 
 .vscode
 .build/
+node_modules/
+tailwind.css
