@@ -4,11 +4,10 @@ exclude = ["deps"]
 resolver = "2"
 
 [workspace.package]
-version = "1.0.0"
 authors = ["Biyard"]
 description = "d.AGIT: Digital Assets Guardianship & Interchange Terminal"
 documentation = "https://dagit.club"
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/biyard/dagit"
 license = "Apache-2.0"
 
