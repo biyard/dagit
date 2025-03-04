@@ -7,11 +7,11 @@ npm install tailwindcss @tailwindcss/cli
 
 ```bash
 # cli version v4.0
-npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch
+make public/tailwind.css
 ```
 
 
 ### Serving App
 ```bash
-make run
+SERVICE=main-ui make run
 ```
