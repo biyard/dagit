@@ -88,7 +88,7 @@ checksum = "6b964d184e89d9b6b67dd2715bc8e74cf3107fb2b529990c90cf517326150bf4"
 
 [[package]]
 name = "api"
-version = "1.0.0"
+version = "0.1.0"
 dependencies = [
  "by-axum",
  "by-types",
@@ -478,7 +478,9 @@ dependencies = [
 name = "by-components"
 version = "0.1.1"
 dependencies = [
+ "by-macros",
  "dioxus",
+ "dioxus-translate",
  "js-sys",
  "num-format",
  "serde",
