@@ -1,10 +1,6 @@
 use validator::ValidationErrors;
 
-pub mod agit;
-pub mod artist;
-pub mod artwork;
-pub mod collection;
-
+pub mod v1;
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(thiserror::Error, Clone, Debug, serde::Serialize, serde::Deserialize)]
