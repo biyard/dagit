@@ -1,23 +1,36 @@
 pub mod config;
+pub mod controllers;
+
+use controllers::v1;
 
 use by_types::DatabaseConfig;
+use models::{agit::Agit, artist::Artist, artwork::Artwork, collection::Collection};
 use sqlx::postgres::PgPoolOptions;
-use thiserror::Error;
 use tokio::net::TcpListener;
 
-async fn migration(_pool: &sqlx::Pool<sqlx::Postgres>) -> Result<(), Error> {
+async fn migration(pool: &sqlx::Pool<sqlx::Postgres>) -> models::Result<()> {
     //TODO: Add Model Migration
+    let agit = Agit::get_repository(pool.clone());
+    let collection = Collection::get_repository(pool.clone());
+    let artwork = Artwork::get_repository(pool.clone());
+
+    let artist = Artist::get_repository(pool.clone());
+
+    agit.create_this_table().await?;
+    collection.create_this_table().await?;
+    artist.create_this_table().await?;
+    artwork.create_this_table().await?;
+
+    agit.create_related_tables().await?;
+    collection.create_related_tables().await?;
+    artist.create_related_tables().await?;
+    artwork.create_related_tables().await?;
+
     Ok(())
 }
 
-#[derive(Error, Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum Error {
-    #[error("Unknown error: {0}")]
-    Unknown(String),
-}
-
 #[tokio::main]
-async fn main() -> Result<(), Error> {
+async fn main() -> models::Result<()> {
     let app = by_axum::new();
     let conf = config::get();
     tracing::debug!("config: {:?}", conf);
@@ -34,6 +47,7 @@ async fn main() -> Result<(), Error> {
 
     migration(&pool).await?;
 
+    let app = app.nest("/v1", v1::routes(pool.clone())?);
     let port = option_env!("PORT").unwrap_or("3000");
     let listener = TcpListener::bind(format!("0.0.0.0:{}", port))
         .await

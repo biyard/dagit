@@ -1,0 +1,32 @@
+[package]
+name = "models"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+reqwest.workspace = true
+serde.workspace = true
+thiserror = "2.0.11"
+validator = { version = "0.20.0", features = ["derive"] }
+by-types.workspace = true
+
+
+by-axum = { workspace = true, optional = true }
+sqlx = { workspace = true, optional = true }
+schemars = { version = "0.8.21", optional = true }
+by-macros = { workspace = true, optional = true }
+
+# by-macros dependencies
+tracing.workspace = true
+serde_json.workspace = true
+rest-api.workspace = true
+serde_urlencoded.workspace = true
+
+[features]
+default = []
+server = ["sqlx", "schemars", "by-macros/server", "by-axum"]
