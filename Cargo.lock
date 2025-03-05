@@ -2497,7 +2497,6 @@ dependencies = [
  "dioxus-translate",
  "getrandom 0.2.15",
  "reqwest",
- "rest-api",
  "serde",
  "wasm-bindgen",
  "wasm-bindgen-futures",
