@@ -5,7 +5,7 @@ use by_types::QueryResponse;
 
 use super::artwork::Artwork;
 
-#[api_model(base = "/v1/collections", table = collections, action_by_id = [delete], iter_type = QueryResponse)]
+#[api_model(base = "/v1/agits/:agit-id/collections", table = collections, action_by_id = [delete], iter_type = QueryResponse)]
 pub struct Collection {
     #[api_model(summary, primary_key)]
     pub id: i64,
