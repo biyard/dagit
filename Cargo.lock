@@ -92,10 +92,10 @@ version = "0.1.0"
 dependencies = [
  "by-axum",
  "by-types",
+ "models",
  "reqwest",
  "serde",
  "sqlx",
- "thiserror 2.0.11",
  "tokio",
  "tracing",
 ]
@@ -2621,6 +2621,25 @@ dependencies = [
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "models"
+version = "1.0.0"
+dependencies = [
+ "by-axum",
+ "by-macros",
+ "by-types",
+ "reqwest",
+ "rest-api",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "sqlx",
+ "thiserror 2.0.11",
+ "tracing",
+ "validator",
 ]
 
 [[package]]

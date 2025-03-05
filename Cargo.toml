@@ -1,5 +1,10 @@
 [workspace]
-members = ["packages/api", "packages/main-ui", "packages/ear-ui"]
+members = [
+    "packages/api",
+    "packages/main-ui",
+    "packages/models",
+    "packages/build-ui",
+]
 exclude = ["deps"]
 resolver = "2"
 
@@ -17,6 +22,8 @@ dioxus-logger = { version = "0.6.2" }
 tracing = { version = "0.1.41" }
 serde = { version = "1.0.218" }
 reqwest = { version = "0.12.12" }
+serde_json = { version = "1.0.139" }
+serde_urlencoded = { version = "0.7.1" }
 #rust-sdk
 by-axum = { path = "deps/rust-sdk/packages/by-axum" }
 by-components = { path = "deps/rust-sdk/packages/by-components" }
@@ -29,6 +36,15 @@ dioxus-aws = { path = "deps/rust-sdk/packages/dioxus-aws" }
 rest-api = { path = "deps/rust-sdk/packages/rest-api" }
 easy-dynamodb = { path = "deps/rust-sdk/packages/easy-dynamodb" }
 
+sqlx = { version = "0.8.3", features = [
+    "sqlite",
+    "postgres",
+    "runtime-tokio",
+    "time",
+    "bigdecimal",
+] }
+
+models = { path = "packages/models" }
 #FIXME: `rest-api` crate has `getrandom` dependency, but it's listed here
 getrandom = { version = "0.2", features = ["js"] }
 
