@@ -2,7 +2,7 @@
 use by_axum::aide;
 use by_macros::api_model;
 
-use crate::{artwork::Artwork, collection::Collection};
+use crate::v1::{artwork::Artwork, collection::Collection};
 
 #[api_model(base = "/agits", table = agits)]
 pub struct Agit {

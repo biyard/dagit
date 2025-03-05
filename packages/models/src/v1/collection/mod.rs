@@ -2,7 +2,7 @@
 use by_axum::aide;
 use by_macros::api_model;
 
-use crate::artwork::Artwork;
+use crate::v1::artwork::Artwork;
 #[api_model(base = "/collections", table = collections)]
 pub struct Collection {
     #[api_model(summary, primary_key)]
