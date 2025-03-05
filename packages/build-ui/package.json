@@ -1,7 +1,7 @@
 {
-  "name": "main-ui",
+  "name": "build-ui",
   "version": "1.0.0",
-  "description": "```bash # cli version v4.0 npm install tailwindcss @tailwindcss/cli ``` 3. Run the following command in the root of the project to start the Tailwind CSS compiler:",
+  "description": "Build UI service for d.AGIT platform",
   "main": "tailwind.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
