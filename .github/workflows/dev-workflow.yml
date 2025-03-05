@@ -63,7 +63,7 @@ jobs:
 
           API_ENDPOINT: https://api.dev.dagit.club
         run: |
-          npm i -g aws-cdk
+          npm i -g aws-cdk @tailwindcss/cli
           make deploy-web
 
   build-ui:
@@ -121,7 +121,7 @@ jobs:
 
           API_ENDPOINT: https://api.dev.dagit.club
         run: |
-          npm i -g aws-cdk
+          npm i -g aws-cdk @tailwindcss/cli
           make deploy-web
   api:
     runs-on: ubuntu-22.04
@@ -168,7 +168,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
 
         run: |
-          npm i -g aws-cdk @tailwindcss/cli
+          npm i -g aws-cdk
           make deploy
 
   create-release-pr:
