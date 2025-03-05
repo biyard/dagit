@@ -11,7 +11,6 @@ env:
 jobs:
   main-ui:
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v3
         with:
@@ -53,7 +52,7 @@ jobs:
           SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BASE_DOMAIN: dagit.club
           DOMAIN: dev.dagit.club
-          STACK: dagit-dev-stack
+          STACK: dagit-main-ui-dev-stack
           ENABLE_S3: true
           ENABLE_LAMBDA: true
 
@@ -61,19 +60,69 @@ jobs:
           ENV: dev
           SERVICE: main-ui
           RUST_LOG: debug
-          FIREBASE_API_KEY: "${{ secrets.FIREBASE_API_KEY }}"
-          FIREBASE_AUTH_DOMAIN: "${{ secrets.FIREBASE_AUTH_DOMAIN }}"
-          FIREBASE_PROJECT_ID: "${{ secrets.FIREBASE_PROJECT_ID }}"
-          FIREBASE_STORAGE_BUCKET: "${{ secrets.FIREBASE_STORAGE_BUCKET }}"
-          FIREBASE_MESSAGING_SENDER_ID: "${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}"
-          FIREBASE_APP_ID: "${{ secrets.FIREBASE_APP_ID }}"
-          FIREBASE_MEASUREMENT_ID: "${{ secrets.FIREBASE_MEASUREMENT_ID }}"
 
           API_ENDPOINT: https://api.dev.dagit.club
         run: |
-          npm i -g aws-cdk
+          npm i -g aws-cdk @tailwindcss/cli
           make deploy-web
 
+  build-ui:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ssh-key: ${{ secrets.PULL_KEY_REPO }}
+
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy, rustfmt
+          target: wasm32-unknown-unknown
+          toolchain: stable
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: Install dioxus-cli
+        run: |
+          cargo binstall dioxus-cli --force
+          cargo binstall toml-cli --force
+
+      - name: Checking violate
+        env:
+          REGION: ap-northeast-2
+          SERVICE: build-ui
+          ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          dx check -p $SERVICE
+
+      - name: Deploy APIs
+        env:
+          REGION: ap-northeast-2
+          # Stack setup
+          ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BASE_DOMAIN: dagit.club
+          DOMAIN: build.dev.dagit.club
+          STACK: dagit-build-ui-dev-stack
+
+          ENABLE_S3: true
+          ENABLE_LAMBDA: true
+
+          # App Setting
+          ENV: dev
+          SERVICE: build-ui
+          RUST_LOG: debug
+
+          API_ENDPOINT: https://api.dev.dagit.club
+        run: |
+          npm i -g aws-cdk @tailwindcss/cli
+          make deploy-web
   api:
     runs-on: ubuntu-22.04
 
@@ -119,13 +168,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
 
         run: |
-          npm i -g aws-cdk @tailwindcss/cli
+          npm i -g aws-cdk
           make deploy
 
   create-release-pr:
     runs-on: ubuntu-latest
-    needs:
-      [main-ui,api]
+    needs: [main-ui, build-ui, api]
     steps:
       - uses: actions/checkout@v3
         with:

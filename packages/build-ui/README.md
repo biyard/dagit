@@ -13,5 +13,5 @@ make public/tailwind.css
 
 ### Serving App
 ```bash
-SERVICE=main-ui make run
+SERVICE=ear-ui make run
 ```

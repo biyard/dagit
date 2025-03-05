@@ -1,0 +1,19 @@
+[package]
+name = "build-ui"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+
+[dependencies]
+dioxus = { workspace = true, features = ["default", "router", "fullstack"] }
+dioxus-logger.workspace = true
+dioxus-translate.workspace = true
+dioxus-aws.workspace = true
+
+[features]
+default = []
+server = ["dioxus-aws/server"]
+lambda = ["dioxus-aws/lambda", "server"]
+web = ["dioxus-aws/web", "dioxus-translate/web"]

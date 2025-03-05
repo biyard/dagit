@@ -1,7 +1,7 @@
 {
-  "name": "main-ui",
+  "name": "build-ui",
   "version": "1.0.0",
-  "description": "User UI service for d.AGIT",
+  "description": "Build UI service for d.AGIT platform",
   "main": "tailwind.config.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

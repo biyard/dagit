@@ -15,7 +15,6 @@ pub enum Route {
             #[route("/")]
             MainPage { lang: Language },
         #[end_layout]
-
     #[end_nest]
     
     #[redirect("/", || Route::MainPage { lang: Language::Ko })]

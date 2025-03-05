@@ -1,4 +1,4 @@
-SERVICE ?= main-ui
+SERVICE ?= build-ui
 VERSION ?= $(shell toml get Cargo.toml package.version | tr -d \")
 COMMIT ?= $(shell git rev-parse --short HEAD)
 ENV ?= local
