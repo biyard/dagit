@@ -52,7 +52,7 @@ jobs:
           SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BASE_DOMAIN: dagit.club
           DOMAIN: dev.dagit.club
-          STACK: dagit-main-ui-dev-stack
+          STACK: dagit-dev-stack
           ENABLE_S3: true
           ENABLE_LAMBDA: true
 
