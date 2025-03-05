@@ -64,6 +64,8 @@ jobs:
           API_ENDPOINT: https://api.dev.dagit.club
         run: |
           npm i -g aws-cdk @tailwindcss/cli
+          cargo clean
+          cargo update -p time --precise 0.3.37
           make deploy-web
 
   build-ui:
@@ -122,6 +124,8 @@ jobs:
           API_ENDPOINT: https://api.dev.dagit.club
         run: |
           npm i -g aws-cdk @tailwindcss/cli
+          cargo clean
+          cargo update -p time --precise 0.3.37
           make deploy-web
   api:
     runs-on: ubuntu-22.04
