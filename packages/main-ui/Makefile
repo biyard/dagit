@@ -25,7 +25,7 @@ setup.tool:
 	cargo binstall dioxus-cli
 	cargo binstall toml-cli
 
-run: assets/tailwind.css
+run: public/tailwind.css
 	$(BUILD_ENV) dx serve
 
 clean:
