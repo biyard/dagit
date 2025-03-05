@@ -17,7 +17,10 @@ repository = "https://github.com/biyard/dagit"
 license = "Apache-2.0"
 
 [workspace.dependencies]
-dioxus = { version = "0.6.3" }
+# dioxus = { version = "0.6.3" }
+dioxus = { version = "0.6.3", git = "https://github.com/hackartists/dioxus.git" }
+dioxus-web = { version = "0.6.3", git = "https://github.com/hackartists/dioxus.git" }
+
 dioxus-logger = { version = "0.6.2" }
 tracing = { version = "0.1.41" }
 serde = { version = "1.0.218" }
