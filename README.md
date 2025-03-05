@@ -45,6 +45,21 @@ export ENABLE_LAMBDA=true
 make deploy
 ```
 
+### Build UI
+
+``` bash
+export STACK=dagit-build-ui-dev-stack
+export SERVICE=build-ui
+export ENV=dev
+export BASE_DOMAIN=dagit.club
+export DOMAIN=build.dev.dagit.club
+
+export ENABLE_S3=true
+export ENABLE_LAMBDA=true
+make deploy
+```
+
+
 ### Main API
 
 ``` bash
