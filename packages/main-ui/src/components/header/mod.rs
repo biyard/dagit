@@ -41,7 +41,7 @@ pub fn Header(lang: Language) -> Element {
                         }
                         Link {
                             //TODO: Change Target
-                            to: Route::MainPage {
+                            to: Route::CollectionsPage{
                                 lang: lang.clone(),
                             },
                             "Fair & Shows"

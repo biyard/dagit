@@ -13,9 +13,12 @@ pub enum Route {
     #[nest("/:lang")]
         #[route("/platform")]
         PlatformPage { lang : Language},
+        #[route("/collections")]
+        CollectionsPage { lang: Language },
         #[layout(RootLayout)]
             #[route("/")]
             MainPage { lang: Language },
+
         #[end_layout]
 
     #[end_nest]

@@ -8,7 +8,6 @@ pub mod pages;
 pub mod routes;
 pub mod utils;
 use routes::Route;
-
 const FAVICON: Asset = asset!("/assets/favicon.svg");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
@@ -42,8 +41,8 @@ fn load_tailwindcss() -> Element {
     }
 }
 
-#[cfg(feature = "lambda")]
-#[allow(dead_code)]
-fn load_tailwindcss() -> Element {
-    rsx! {}
-}
+// #[cfg(feature = "lambda")]
+// #[allow(dead_code)]
+// fn load_tailwindcss() -> Element {
+//     rsx! {}
+// }

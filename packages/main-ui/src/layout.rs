@@ -3,9 +3,8 @@ use dioxus::prelude::*;
 
 use dioxus_translate::Language;
 
-use crate::routes::Route;
+use crate::{components::prelude::{Footer, Header}, routes::Route};
 
-use crate::components::prelude::*;
 
 #[component]
 pub fn RootLayout(lang: Language) -> Element {
