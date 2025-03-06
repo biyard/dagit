@@ -2,10 +2,9 @@
 use dioxus::prelude::*;
 
 pub mod config;
-pub mod layout;
-
 pub mod pages;
 pub mod routes;
+use dioxus_popup::PopupService;
 use routes::Route;
 
 const FAVICON: Asset = asset!("/public/favicon.svg");
@@ -20,6 +19,7 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    PopupService::init();
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
@@ -38,6 +38,13 @@ fn App() -> Element {
 fn load_tailwindcss() -> Element {
     rsx! {
         script { src: "https://unpkg.com/@tailwindcss/browser@4" }
+        style { r#type: "text/tailwindcss",
+            r#"
+                @theme {{
+                    --color-primary: #171717;
+                }}
+            "#
+        }
     }
 }
 

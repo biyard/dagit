@@ -37,7 +37,8 @@ dioxus-translate = { path = "deps/rust-sdk/packages/dioxus-translate", features 
 ] }
 dioxus-aws = { path = "deps/rust-sdk/packages/dioxus-aws" }
 rest-api = { path = "deps/rust-sdk/packages/rest-api" }
-easy-dynamodb = { path = "deps/rust-sdk/packages/easy-dynamodb" }
+dioxus-popup = { path = "./deps/rust-sdk/packages/dioxus-popup" }
+
 
 sqlx = { version = "0.8.3", features = [
     "sqlite",

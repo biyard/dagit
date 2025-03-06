@@ -4,12 +4,7 @@ use dioxus_logger::tracing;
 use dioxus_translate::*;
 
 translate! {
-    PlatformTranslate;
-
-    d_agit: {
-        en: "d.AGIT",
-        ko: "디.아지트",
-    },
+    RootTranslate;
 
     solution: {
         en: "Solution",
