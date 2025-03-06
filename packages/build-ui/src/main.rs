@@ -11,7 +11,6 @@ use routes::Route;
 const FAVICON: Asset = asset!("/public/favicon.svg");
 const MAIN_CSS: Asset = asset!("/public/main.css");
 const TAILWIND_CSS: Asset = asset!("/public/tailwind.css");
-
 fn main() {
     dioxus_logger::init(config::get().log_level).expect("failed to init logger");
 
@@ -36,22 +35,31 @@ fn App() -> Element {
 
 #[cfg(not(feature = "lambda"))]
 #[allow(dead_code)]
+#[component]
 fn load_tailwindcss() -> Element {
+    use dioxus::document::{StyleProps, document};
+
+    let theme = include_str!("../tailwind-theme.css");
+    let v = StyleProps::builder()
+        .children(rsx! {
+            {theme}
+        })
+        .r#type("text/tailwindcss")
+        .build();
+    let doc = document();
+    doc.create_style(v);
+    // Note:
+    // `style { r#type: "text/tailwindcss", {theme}}` is not working.
+    // The reason is that Dioxus creates `<!-- -->` comment nodes,
+    // which are not allowed inside the `<style>` tag.
     rsx! {
         script { src: "https://unpkg.com/@tailwindcss/browser@4" }
-        style { r#type: "text/tailwindcss",
-            r#"
-                @theme {{
-                    --color-primary: #30D4A0;
-                    --color-background: #171717;
-                }}
-            "#
-        }
     }
 }
 
 #[cfg(feature = "lambda")]
 #[allow(dead_code)]
+#[component]
 fn load_tailwindcss() -> Element {
-    rsx! {}
+    VNode::empty()
 }

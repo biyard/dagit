@@ -3,14 +3,10 @@ module.exports = {
   mode: "all",
   content: ["./src/**/*.{rs,html,css}", "./dist/**/*.html"],
   theme: {
-    extend: {
-      colors: {
-        primary: {
-          DEFAULT: "#30D4A0"
-        },
-        background: "#171717",
-      }
-    },
+    // If you want to extend the theme,
+    // Please do not modify this file.
+    // Instead, add your changes to the "tailwind-theme.css".
+    extend: { },
   },
   plugins: [],
 };
