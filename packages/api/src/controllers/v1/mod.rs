@@ -1,12 +1,16 @@
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use sqlx::{Pool, Postgres};
+mod agit;
+mod artist;
+mod artwork;
+mod collection;
+
+use agit::AgitControllerV1;
+use artist::ArtistControllerV1;
+use artwork::ArtworkControllerV1;
 
 pub fn routes(pool: Pool<Postgres>) -> models::Result<by_axum::router::BiyardRouter> {
     Ok((by_axum::router::BiyardRouter::new())
-        .nest("/agits", controllers::v1::agit::routes(pool.clone())?)
-        .nest("/artists", controllers::v1::artist::routes(pool.clone())?)
-        .nest("/artworks", controllers::v1::artwork::routes(pool.clone())?)
-        .nest(
-            "/collections",
-            controllers::v1::collection::routes(pool.clone())?,
-        ))
+        .nest("/agits", AgitControllerV1::route(pool.clone())?)
+        .nest("/artworks", ArtworkControllerV1::route(pool.clone())?)
+        .nest("/artists", ArtistControllerV1::route(pool.clone())?))
 }

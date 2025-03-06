@@ -11,7 +11,6 @@ license.workspace = true
 [dependencies]
 reqwest.workspace = true
 serde.workspace = true
-thiserror = "2.0.11"
 validator = { version = "0.20.0", features = ["derive"] }
 by-types.workspace = true
 

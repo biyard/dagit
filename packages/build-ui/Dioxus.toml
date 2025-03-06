@@ -3,7 +3,7 @@
 [web.app]
 
 # HTML title tag content
-title = "ear-ui"
+title = "dAGIT Builder"
 
 # include `assets` in web platform
 [web.resource]
