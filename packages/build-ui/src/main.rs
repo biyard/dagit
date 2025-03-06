@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
 
+pub mod components;
 pub mod config;
 pub mod pages;
 pub mod routes;
@@ -41,7 +42,8 @@ fn load_tailwindcss() -> Element {
         style { r#type: "text/tailwindcss",
             r#"
                 @theme {{
-                    --color-primary: #171717;
+                    --color-primary: #30D4A0;
+                    --color-background: #171717;
                 }}
             "#
         }
