@@ -1,5 +1,4 @@
 use std::error::Error;
-
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "server")]
@@ -14,6 +13,17 @@ pub enum ServiceError {
     Unknown(String),
     NotFound,
     Unauthorized,
+    BadRequest(String),
+    Conflict(String),
+    InternalServerError(String),
+    DatabaseError(String),
+    ValidationError(String),
+    Forbidden,
+    CannotCreateAgit,
+    CannotUpdateAgit,
+    CannotDeleteAgit,
+    AgitAlreadyExists,
+    AgitNotFound,
 }
 
 impl std::fmt::Display for ServiceError {
@@ -48,8 +58,19 @@ unsafe impl Sync for ServiceError {}
 #[cfg(feature = "server")]
 impl by_axum::axum::response::IntoResponse for ServiceError {
     fn into_response(self) -> by_axum::axum::response::Response {
+        let status_code = match self {
+            ServiceError::NotFound | ServiceError::AgitNotFound => by_axum::axum::http::StatusCode::NOT_FOUND,
+            ServiceError::Unauthorized => by_axum::axum::http::StatusCode::UNAUTHORIZED,
+            ServiceError::Forbidden => by_axum::axum::http::StatusCode::FORBIDDEN,
+            ServiceError::BadRequest(_) | ServiceError::ValidationError(_) => by_axum::axum::http::StatusCode::BAD_REQUEST,
+            ServiceError::Conflict(_) | ServiceError::AgitAlreadyExists => by_axum::axum::http::StatusCode::CONFLICT,
+            ServiceError::CannotCreateAgit | ServiceError::CannotUpdateAgit | ServiceError::CannotDeleteAgit => by_axum::axum::http::StatusCode::BAD_REQUEST,
+            ServiceError::InternalServerError(_) | ServiceError::DatabaseError(_) => by_axum::axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+            _ => by_axum::axum::http::StatusCode::BAD_REQUEST,
+        };
+
         (
-            by_axum::axum::http::StatusCode::BAD_REQUEST,
+            status_code,
             by_axum::axum::Json(self),
         )
             .into_response()
