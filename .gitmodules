@@ -1,3 +1,3 @@
 [submodule "deps/rust-sdk"]
 	path = deps/rust-sdk
-	url = https://github.com/biyard/rust-sdk.git
+	url = git@github.com:biyard/rust-sdk.git
