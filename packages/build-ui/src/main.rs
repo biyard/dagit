@@ -10,7 +10,7 @@ use routes::Route;
 
 const FAVICON: Asset = asset!("/public/favicon.svg");
 const MAIN_CSS: Asset = asset!("/public/main.css");
-const TAILWIND_CSS: Asset = asset!("/public/tailwind.css");
+const TAILWIND_CSS: Asset = asset!("/public/main.css");
 
 fn main() {
     dioxus_logger::init(config::get().log_level).expect("failed to init logger");

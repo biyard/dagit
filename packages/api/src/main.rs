@@ -4,7 +4,7 @@ pub mod controllers;
 use controllers::v1;
 
 use by_types::DatabaseConfig;
-use models::{agit::Agit, artist::Artist, artwork::Artwork, collection::Collection};
+use models::v1::{agit::Agit, artist::Artist, artwork::Artwork, collection::Collection};
 use sqlx::postgres::PgPoolOptions;
 use tokio::net::TcpListener;
 
