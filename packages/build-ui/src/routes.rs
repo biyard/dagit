@@ -19,7 +19,7 @@ pub enum Route {
             #[end_layout]
         #[end_nest]
     #[end_nest]
-    #[redirect("/", || Route::RootPage { lang: Language::Ko })]
+    #[redirect("/", || Route::RootPage { lang: Language::En })]
     #[route("/:..route")]
     NotFoundPage {
         route: Vec<String>,
