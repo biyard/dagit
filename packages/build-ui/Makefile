@@ -31,6 +31,7 @@ run: public/tailwind.css
 clean:
 	rm -rf public/tailwind.css
 
+.PHONY: node_modules
 node_modules:
 	npm i
 
