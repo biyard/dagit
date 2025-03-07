@@ -449,9 +449,11 @@ dependencies = [
 name = "build-ui"
 version = "0.1.0"
 dependencies = [
+ "by-components",
  "dioxus",
  "dioxus-aws",
  "dioxus-logger 0.6.2",
+ "dioxus-popup",
  "dioxus-translate",
 ]
 
@@ -1226,6 +1228,14 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "tracing-wasm",
+]
+
+[[package]]
+name = "dioxus-popup"
+version = "0.1.1"
+dependencies = [
+ "by-components",
+ "dioxus",
 ]
 
 [[package]]
