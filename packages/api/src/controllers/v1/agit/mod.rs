@@ -75,13 +75,6 @@ impl AgitControllerV1 {
             return Err(ApiError::Unauthorized);
         }
 
-        Agit::query_builder()
-            .id_equals(id)
-            .query()
-            .fetch_one(&self.pool)
-            .await
-            .map_err(|_| ApiError::NotFound)?;
-
         let agit = self.repo.update(id, param.into()).await?;
         Ok(agit)
     }
