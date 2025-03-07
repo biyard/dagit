@@ -1,95 +1,190 @@
-#![allow(unused)]
-
-use by_axum::aide;
-use by_axum::auth::Authorization;
-use by_axum::axum::extract::{Path, Query, State};
-use by_axum::axum::routing::post;
-use by_axum::axum::{Extension, Json};
-use models::Result;
-use models::v1::prelude::*;
-
-use super::collection::CollectionControllerV1;
-
-#[derive(
-    Debug, Clone, serde::Deserialize, serde::Serialize, schemars::JsonSchema, aide::OperationIo,
-)]
-pub struct AgitPathParam {
-    id: i64,
-}
+use by_axum::{
+    aide,
+    auth::Authorization,
+    axum::{
+        Extension, Json,
+        extract::{Path, Query, State},
+        routing::{get, post},
+    },
+};
+use by_types::QueryResponse;
+use models::{
+    Result,
+    error::ServiceError as ApiError,
+    v1::agit::{
+        Agit, AgitAction, AgitByIdAction, AgitCreateRequest, AgitGetResponse, AgitParam, AgitQuery,
+        AgitRepository, AgitSummary, AgitUpdateRequest,
+    },
+};
+use sqlx::postgres::PgRow;
 
 #[derive(Clone, Debug)]
 pub struct AgitControllerV1 {
-    pool: sqlx::PgPool,
     repo: AgitRepository,
+    pool: sqlx::Pool<sqlx::Postgres>,
 }
 
 impl AgitControllerV1 {
-    pub fn new(pool: sqlx::PgPool) -> Self {
+    async fn query(
+        &self,
+        auth: Option<Authorization>,
+        param: AgitQuery,
+    ) -> Result<QueryResponse<AgitSummary>> {
+        tracing::debug!("{param}");
+        if auth.is_none() {
+            return Err(ApiError::Unauthorized);
+        }
+
+        let mut total_count = 0;
+        let items: Vec<AgitSummary> = AgitSummary::query_builder()
+            .limit(param.size())
+            .page(param.page())
+            .query()
+            .map(|row: PgRow| {
+                use sqlx::Row;
+                total_count = row.try_get("total_count").unwrap_or_default();
+                row.into()
+            })
+            .fetch_all(&self.pool)
+            .await?;
+
+        Ok(QueryResponse { total_count, items })
+    }
+
+    async fn create(
+        &self,
+        auth: Option<Authorization>,
+        AgitCreateRequest { title }: AgitCreateRequest,
+    ) -> Result<Agit> {
+        if auth.is_none() {
+            return Err(ApiError::Unauthorized);
+        }
+
+        let agit = self.repo.insert(title).await?;
+
+        Ok(agit)
+    }
+
+    async fn update(
+        &self,
+        id: i64,
+        auth: Option<Authorization>,
+        param: AgitUpdateRequest,
+    ) -> Result<Agit> {
+        if auth.is_none() {
+            return Err(ApiError::Unauthorized);
+        }
+
+        Agit::query_builder()
+            .id_equals(id)
+            .query()
+            .fetch_one(&self.pool)
+            .await
+            .map_err(|_| ApiError::NotFound)?;
+
+        let agit = self.repo.update(id, param.into()).await?;
+        Ok(agit)
+    }
+
+    async fn delete(&self, id: i64, auth: Option<Authorization>) -> Result<Agit> {
+        if auth.is_none() {
+            return Err(ApiError::Unauthorized);
+        }
+
+        let agit = self.repo.delete(id).await?;
+        Ok(agit)
+    }
+}
+
+impl AgitControllerV1 {
+    pub fn new(pool: sqlx::Pool<sqlx::Postgres>) -> Self {
         let repo = Agit::get_repository(pool.clone());
         Self { repo, pool }
     }
 
     pub fn route(pool: sqlx::PgPool) -> Result<by_axum::axum::Router> {
-        let ctrl = Self::new(pool.clone());
+        let ctrl = Self::new(pool);
         Ok(by_axum::axum::Router::new()
-            .route("/:id", post(Self::act_by_id).get(Self::get))
-            .route("/", post(Self::act).get(Self::list))
-            .with_state(ctrl)
-            .nest(
-                "/:agit_id/collections",
-                CollectionControllerV1::route(pool.clone())?,
-            ))
+            .route("/:id", get(Self::get_agit_by_id).post(Self::act_agit_by_id))
+            .route("/", post(Self::act_agit).get(Self::get_agit))
+            .with_state(ctrl))
+    }
+
+    pub async fn act_agit(
+        State(ctrl): State<AgitControllerV1>,
+        Extension(auth): Extension<Option<Authorization>>,
+        Json(body): Json<AgitAction>,
+    ) -> Result<Json<Agit>> {
+        tracing::debug!("act_agit {:?}", body);
+
+        match body {
+            AgitAction::Create(param) => {
+                let res = ctrl.create(auth, param).await?;
+                Ok(Json(res))
+            }
+        }
+    }
+
+    pub async fn act_agit_by_id(
+        State(ctrl): State<AgitControllerV1>,
+        Extension(auth): Extension<Option<Authorization>>,
+        Path(AgitPath { id }): Path<AgitPath>,
+        Json(body): Json<AgitByIdAction>,
+    ) -> Result<Json<Agit>> {
+        tracing::debug!("act_agit_by_id {} {:?}", id, body);
+
+        match body {
+            AgitByIdAction::Update(param) => {
+                let res = ctrl.update(id, auth, param).await?;
+                Ok(Json(res))
+            }
+            AgitByIdAction::Delete(_) => {
+                let res = ctrl.delete(id, auth).await?;
+                Ok(Json(res))
+            }
+        }
+    }
+
+    pub async fn get_agit_by_id(
+        State(ctrl): State<AgitControllerV1>,
+        Extension(auth): Extension<Option<Authorization>>,
+        Path(AgitPath { id }): Path<AgitPath>,
+    ) -> Result<Json<Agit>> {
+        tracing::debug!("get_agit {}", id);
+
+        if auth.is_none() {
+            return Err(ApiError::Unauthorized);
+        }
+
+        Ok(Json(
+            Agit::query_builder()
+                .id_equals(id)
+                .query()
+                .map(Agit::from)
+                .fetch_one(&ctrl.pool)
+                .await?,
+        ))
+    }
+
+    pub async fn get_agit(
+        State(ctrl): State<AgitControllerV1>,
+        Extension(auth): Extension<Option<Authorization>>,
+        Query(q): Query<AgitParam>,
+    ) -> Result<Json<AgitGetResponse>> {
+        tracing::debug!("list_agit {}", q);
+
+        match q {
+            AgitParam::Query(param) => {
+                Ok(Json(AgitGetResponse::Query(ctrl.query(auth, param).await?)))
+            }
+        }
     }
 }
 
-impl AgitControllerV1 {
-    pub async fn list(
-        State(ctrl): State<AgitControllerV1>,
-        Extension(claim): Extension<Option<Authorization>>,
-        Query(q): Query<AgitParam>,
-    ) -> Result<Json<Vec<AgitSummary>>> {
-        //TODO: Add Listing Agits
-        tracing::debug!("list agits");
-        Ok(Json(vec![]))
-    }
-    pub async fn get(
-        State(ctrl): State<AgitControllerV1>,
-        Extension(claim): Extension<Option<Authorization>>,
-        Path(AgitPathParam { id }): Path<AgitPathParam>,
-    ) -> Result<Json<Agit>> {
-        tracing::debug!("get agit {id}");
-        Ok(Json(Agit::default()))
-    }
-    pub async fn act(
-        State(ctrl): State<AgitControllerV1>,
-        Extension(claim): Extension<Option<Authorization>>,
-        Json(body): Json<AgitAction>,
-    ) -> Result<Json<Agit>> {
-        tracing::debug!("agit act {body:?}");
-        match body {
-            AgitAction::Create(req) => {
-                //TODO: Add Create Agit
-                Ok(Json(Agit::default()))
-            }
-        }
-    }
-
-    pub async fn act_by_id(
-        State(ctrl): State<AgitControllerV1>,
-        Path(AgitPathParam { id }): Path<AgitPathParam>,
-        Extension(claim): Extension<Option<Authorization>>,
-        Json(body): Json<AgitByIdAction>,
-    ) -> Result<Json<Agit>> {
-        tracing::debug!("agit act_by_id {id} {body:?}");
-        match body {
-            AgitByIdAction::Update(_) => {
-                //TODO: Add Update Agit
-                Ok(Json(Agit::default()))
-            }
-            AgitByIdAction::Delete(_) => {
-                //TODO: Add Delete Agit
-                Ok(Json(Agit::default()))
-            }
-        }
-    }
+#[derive(
+    Debug, Clone, serde::Deserialize, serde::Serialize, schemars::JsonSchema, aide::OperationIo,
+)]
+#[serde(rename_all = "kebab-case")]
+pub struct AgitPath {
+    pub id: i64,
 }
