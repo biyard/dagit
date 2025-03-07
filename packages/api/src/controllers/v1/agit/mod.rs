@@ -27,7 +27,6 @@ pub struct AgitControllerV1 {
 impl AgitControllerV1 {
     async fn query(
         &self,
-        agit_id: i64,
         auth: Option<Authorization>,
         param: AgitQuery,
     ) -> Result<QueryResponse<AgitSummary>> {
@@ -40,7 +39,6 @@ impl AgitControllerV1 {
         let items: Vec<AgitSummary> = AgitSummary::query_builder()
             .limit(param.size())
             .page(param.page())
-            .id_equals(agit_id)
             .query()
             .map(|row: PgRow| {
                 use sqlx::Row;
@@ -62,15 +60,7 @@ impl AgitControllerV1 {
             return Err(ApiError::Unauthorized);
         }
 
-        let mut tx = self.pool.begin().await?;
-
-        let agit = self
-            .repo
-            .insert_with_tx(&mut *tx, title)
-            .await?
-            .ok_or(ApiError::CannotCreateAgit)?;
-
-        tx.commit().await?;
+        let agit = self.repo.insert(title).await?;
 
         Ok(agit)
     }
@@ -84,6 +74,13 @@ impl AgitControllerV1 {
         if auth.is_none() {
             return Err(ApiError::Unauthorized);
         }
+
+        Agit::query_builder()
+            .id_equals(id)
+            .query()
+            .fetch_one(&self.pool)
+            .await
+            .map_err(|_| ApiError::NotFound)?;
 
         let agit = self.repo.update(id, param.into()).await?;
         Ok(agit)
@@ -131,18 +128,18 @@ impl AgitControllerV1 {
     pub async fn act_agit_by_id(
         State(ctrl): State<AgitControllerV1>,
         Extension(auth): Extension<Option<Authorization>>,
-        Path(AgitPath { agit_id }): Path<AgitPath>,
+        Path(AgitPath { id }): Path<AgitPath>,
         Json(body): Json<AgitByIdAction>,
     ) -> Result<Json<Agit>> {
-        tracing::debug!("act_agit_by_id {} {:?}", agit_id, body);
+        tracing::debug!("act_agit_by_id {} {:?}", id, body);
 
         match body {
             AgitByIdAction::Update(param) => {
-                let res = ctrl.update(agit_id, auth, param).await?;
+                let res = ctrl.update(id, auth, param).await?;
                 Ok(Json(res))
             }
             AgitByIdAction::Delete(_) => {
-                let res = ctrl.delete(agit_id, auth).await?;
+                let res = ctrl.delete(id, auth).await?;
                 Ok(Json(res))
             }
         }
@@ -150,13 +147,18 @@ impl AgitControllerV1 {
 
     pub async fn get_agit_by_id(
         State(ctrl): State<AgitControllerV1>,
-        Extension(_auth): Extension<Option<Authorization>>,
-        Path(AgitPath { agit_id }): Path<AgitPath>,
+        Extension(auth): Extension<Option<Authorization>>,
+        Path(AgitPath { id }): Path<AgitPath>,
     ) -> Result<Json<Agit>> {
-        tracing::debug!("get_agit {}", agit_id);
+        tracing::debug!("get_agit {}", id);
+
+        if auth.is_none() {
+            return Err(ApiError::Unauthorized);
+        }
+
         Ok(Json(
             Agit::query_builder()
-                .id_equals(agit_id)
+                .id_equals(id)
                 .query()
                 .map(Agit::from)
                 .fetch_one(&ctrl.pool)
@@ -166,16 +168,15 @@ impl AgitControllerV1 {
 
     pub async fn get_agit(
         State(ctrl): State<AgitControllerV1>,
-        Path(AgitParentPath { agit_id }): Path<AgitParentPath>,
         Extension(auth): Extension<Option<Authorization>>,
         Query(q): Query<AgitParam>,
     ) -> Result<Json<AgitGetResponse>> {
-        tracing::debug!("list_agit {} {:?}", agit_id, q);
+        tracing::debug!("list_agit {}", q);
 
         match q {
-            AgitParam::Query(param) => Ok(Json(AgitGetResponse::Query(
-                ctrl.query(agit_id, auth, param).await?,
-            ))),
+            AgitParam::Query(param) => {
+                Ok(Json(AgitGetResponse::Query(ctrl.query(auth, param).await?)))
+            }
         }
     }
 }
@@ -185,13 +186,5 @@ impl AgitControllerV1 {
 )]
 #[serde(rename_all = "kebab-case")]
 pub struct AgitPath {
-    pub agit_id: i64,
-}
-
-#[derive(
-    Debug, Clone, serde::Deserialize, serde::Serialize, schemars::JsonSchema, aide::OperationIo,
-)]
-#[serde(rename_all = "kebab-case")]
-pub struct AgitParentPath {
-    pub agit_id: i64,
+    pub id: i64,
 }
