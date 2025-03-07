@@ -98,13 +98,6 @@ impl CollectionControllerV1 {
             return Err(ApiError::Unauthorized);
         }
 
-        Collection::query_builder()
-            .id_equals(id)
-            .query()
-            .fetch_one(&self.pool)
-            .await
-            .map_err(|_| ApiError::NotFound)?;
-
         let collection = self.repo.update(id, param.into()).await?;
         Ok(collection)
     }
@@ -113,13 +106,6 @@ impl CollectionControllerV1 {
         if auth.is_none() {
             return Err(ApiError::Unauthorized);
         }
-
-        Collection::query_builder()
-            .id_equals(id)
-            .query()
-            .fetch_one(&self.pool)
-            .await
-            .map_err(|_| ApiError::NotFound)?;
 
         self.repo.delete(id).await.map_err(|_| ApiError::NotFound)
     }
