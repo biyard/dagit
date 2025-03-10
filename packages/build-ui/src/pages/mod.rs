@@ -1,7 +1,15 @@
+// 404 Page
 mod _route;
-mod main;
 
-pub mod prelude {
-    pub use super::_route::NotFoundPage;
-    pub use super::main::MainPage;
-}
+// Root Page
+mod components;
+mod layout;
+mod page;
+
+mod agits;
+
+pub use _route::*;
+pub use layout::HeaderLayout;
+pub use page::RootPage;
+
+pub use agits::*;

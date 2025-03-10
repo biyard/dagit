@@ -18,7 +18,7 @@ pub fn Header(lang: Language) -> Element {
                         },
                         ServiceLogo {}
                     }
-                    Search {
+                    SearchComponent {
                         placeholder: "Search by artist, gallery, meta tag...",
                         onchange: |value| {
                             tracing::debug!("value {:?}", value);
@@ -69,7 +69,7 @@ pub fn Header(lang: Language) -> Element {
 }
 
 #[component]
-pub fn Search(placeholder: String, onchange: EventHandler<String>) -> Element {
+pub fn SearchComponent(placeholder: String, onchange: EventHandler<String>) -> Element {
     let mut value = use_signal(String::default);
 
     rsx! {

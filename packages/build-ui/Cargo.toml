@@ -11,6 +11,8 @@ dioxus = { workspace = true, features = ["default", "router", "fullstack"] }
 dioxus-logger.workspace = true
 dioxus-translate.workspace = true
 dioxus-aws.workspace = true
+dioxus-popup.workspace = true
+by-components.workspace = true
 
 [features]
 default = []
