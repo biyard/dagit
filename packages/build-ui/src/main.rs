@@ -8,6 +8,7 @@ pub mod routes;
 use dioxus_popup::PopupService;
 use routes::Route;
 
+
 const FAVICON: Asset = asset!("/public/favicon.svg");
 const MAIN_CSS: Asset = asset!("/public/main.css");
 const TAILWIND_CSS: Asset = asset!("/public/tailwind.css");

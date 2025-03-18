@@ -34,8 +34,8 @@ pub fn HeaderLayout(lang: Language) -> Element {
     rsx! {
         SuspenseWrapper {
             div { class: "relative w-full min-h-lvh flex flex-col items-center bg-black",
-                div { class: "fixed bg-radial-[50%_50%_at_50%_50%] from-[#30D4A0] to-[#737373/0%] w-[1100px] h-[1100px] -top-[800px] -left-[480px] rounded-full" }
-                div { class: "fixed bg-radial-[50%_50%_at_50%_50%] from-[#FF2990] to-[#737373/0%] w-[1100px] h-[1100px] right-[80px] -bottom-[900px] rounded-full" }
+                // div { class: "fixed bg-radial-[50%_50%_at_50%_50%] from-[#30D4A0] to-[#737373/0%] w-[1100px] h-[1100px] -top-[800px] -left-[480px] rounded-full" }
+                // div { class: "fixed bg-radial-[50%_50%_at_50%_50%] from-[#FF2990] to-[#737373/0%] w-[1100px] h-[1100px] right-[80px] -bottom-[900px] rounded-full" }
                 div { class: "max-w-[1440px] w-full z-1",
                     Header { lang }
                     Outlet::<Route> {}

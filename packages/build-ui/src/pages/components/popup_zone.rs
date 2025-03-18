@@ -1,7 +1,6 @@
 use by_components::icons::validations::Clear;
 use dioxus::prelude::*;
 use dioxus_popup::PopupService;
-
 #[component]
 pub fn PopupZone() -> Element {
     let mut popup: PopupService = use_context();
@@ -12,7 +11,7 @@ pub fn PopupZone() -> Element {
                 "{}",
                 match popup.is_opened() {
                     true => {
-                        "fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-[4px] bg-black/25 z-[101]"
+                        "fixed w-screen inset-0 bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-[4px] z-[101]"
                     }
                     false => "hidden",
                 },
@@ -22,7 +21,7 @@ pub fn PopupZone() -> Element {
             },
             if popup.is_opened() {
                 div {
-                    class: "bg-black border-neutral-800 relative border-[1px] px-[30px] py-[25px] shadow-[0_0_100px_0px_rgba(255,41,144,0.50)]",
+                    class: "bg-black border-neutral-800 relative border-[1px] px-[30px] py-[25px] shadow-[0_0_100px_0px_rgba(255,41,144,0.50)] max-h-[50vh] overflow-auto",
                     onclick: move |e| {
                         e.stop_propagation();
                     },

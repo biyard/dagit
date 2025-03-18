@@ -5,6 +5,7 @@ mod _route;
 mod components;
 mod layout;
 mod page;
+mod controller;
 
 mod agits;
 
