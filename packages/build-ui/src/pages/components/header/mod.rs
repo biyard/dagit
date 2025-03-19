@@ -1,15 +1,18 @@
 use crate::{components::ServiceLogo, routes::Route};
 use dioxus::prelude::*;
 use dioxus_popup::PopupService;
-use dioxus_translate::{translate, Language};
+use dioxus_translate::{Language, translate};
 use i18n::HeaderTranslate;
 mod i18n;
 
+#[allow(dead_code)]
 #[derive(Clone, PartialEq)]
 enum Blockchain {
     Ethereum,
     Solana,
 }
+
+#[allow(dead_code)]
 
 #[derive(Clone, PartialEq)]
 struct Wallet {
@@ -25,12 +28,13 @@ impl ValidationService {
         name.len() >= 3 && name.len() <= 20
     }
 
-    fn is_valid_email(email: &str) -> bool {
-        // Basic email validation
-        email.contains('@') && email.contains('.')
+    fn is_valid_short_url(url: &str) -> bool {
+        // Basic url validation
+        url.contains("https://") && url.contains('.')
     }
 }
 
+#[allow(dead_code)]
 fn get_wallets(blockchain: Option<&Blockchain>) -> Vec<Wallet> {
     match blockchain {
         Some(Blockchain::Ethereum) => vec![
@@ -107,7 +111,7 @@ fn BlockchainPopup() -> Element {
 #[component]
 fn WalletPopup(selected_blockchain: Signal<Option<Blockchain>>) -> Element {
     let mut popup: PopupService = use_context();
-    let selected_wallet = use_signal(|| None::<Wallet>);
+    let mut selected_wallet = use_signal(|| None::<Wallet>);
 
     let wallets = get_wallets(selected_blockchain.read().as_ref());
 
@@ -155,24 +159,25 @@ fn NameSettingPopup() -> Element {
     let mut popup: PopupService = use_context();
 
     // State for form inputs
-    let display_name = use_signal(|| String::new());
-    let email = use_signal(|| String::new());
-    let terms_accepted = use_signal(|| false);
-    let newsletter_accepted = use_signal(|| false);
+    let mut display_name = use_signal(|| String::new());
+    let mut short_url = use_signal(|| String::new());
+    let mut terms_accepted = use_signal(|| false);
+    let mut newsletter_accepted = use_signal(|| false);
 
     // Validation state
-    let is_name_valid = use_signal(|| false);
-    let is_email_valid = use_signal(|| false);
+    let mut is_name_valid = use_signal(|| false);
+    let mut is_short_url_valid = use_signal(|| false);
 
     // Computed property for button disabled state
-    let is_form_valid = *is_name_valid.read() && *is_email_valid.read() && *terms_accepted.read();
+    let is_form_valid =
+        *is_name_valid.read() && *is_short_url_valid.read() && *terms_accepted.read();
 
     // Update validation when inputs change
     use_effect(move || {
         is_name_valid.set(ValidationService::is_valid_display_name(
             &display_name.read(),
         ));
-        is_email_valid.set(ValidationService::is_valid_email(&email.read()));
+        is_short_url_valid.set(ValidationService::is_valid_short_url(&short_url.read()));
     });
 
     rsx! {
@@ -199,21 +204,23 @@ fn NameSettingPopup() -> Element {
                             placeholder: "name120",
                             value: "{display_name}",
                             oninput: move |e| {
-                                display_name.set(e.value.clone());
-                                is_name_valid.set(ValidationService::is_valid_display_name(&e.value));
+                                display_name.set(e.value().clone());
+                                is_name_valid.set(ValidationService::is_valid_display_name(&e.value()));
                             }
                         }
                     }
 
                     div { class: "mt-6",
-                        label { class: "block text-white mb-2", "Agit Name" }
+                        label { class: "block text-white mb-2", "Short URL" }
                         input {
                             class: "w-full bg-transparent border border-neutral-700 text-white p-3 rounded-sm focus:outline-none focus:border-blue-500",
-                            placeholder: "email@email.com",
-                            value: "{email}",
+                            placeholder: "https://dagit.com",
+                            value: "{short_url}",
                             oninput: move |e| {
-                                email.set(e.value.clone());
-                                is_email_valid.set(ValidationService::is_valid_email(&e.value));
+                                short_url.set(e.value().clone());
+                                is_short_url_valid.set(ValidationService::is_valid_short_url(&e.value()));
+
+
                             }
                         }
                     }
@@ -223,7 +230,8 @@ fn NameSettingPopup() -> Element {
                             r#type: "checkbox",
                             checked: "{terms_accepted}",
                             onchange: move |_| {
-                                terms_accepted.set(!*terms_accepted.read());
+                                let current = *terms_accepted.read();
+                                terms_accepted.set(!current);
                             }
                         }
                         label { class: "text-white",
@@ -238,7 +246,8 @@ fn NameSettingPopup() -> Element {
                             r#type: "checkbox",
                             checked: "{newsletter_accepted}",
                             onchange: move |_| {
-                                newsletter_accepted.set(!*newsletter_accepted.read());
+                                let current = *newsletter_accepted.read();
+                                newsletter_accepted.set(!current);
                             }
                         }
                         label { class: "text-white", "I want to receive announcements and news from d.AgitÄt." }
@@ -254,7 +263,7 @@ fn NameSettingPopup() -> Element {
                             disabled: !is_form_valid,
                             onclick: move |_| {
                                 if is_form_valid {
-                                    println!("Sign-up completed! Name: {}, Email: {}", display_name.read(), email.read());
+                                    println!("Sign-up completed! Name: {}, Short-URL: {}", display_name.read(), short_url.read());
                                     popup.close();
                                     // TODO Account creation func...
                                 }
