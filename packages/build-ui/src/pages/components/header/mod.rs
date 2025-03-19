@@ -17,6 +17,21 @@ struct Wallet {
     image_url: &'static str,
 }
 
+struct ValidationService;
+
+impl ValidationService {
+    fn is_valid_display_name(name: &str) -> bool {
+        // Name should be between 3 and 20 characters
+        name.len() >= 3 && name.len() <= 20
+    }
+
+    fn is_valid_email(email: &str) -> bool {
+        // Basic email validation
+        email.contains('@') && email.contains('.')
+    }
+}
+
+
 fn get_wallets(blockchain: Option<&Blockchain>) -> Vec<Wallet> {
     match blockchain {
         Some(Blockchain::Ethereum) => vec![
@@ -47,6 +62,7 @@ fn get_wallets(blockchain: Option<&Blockchain>) -> Vec<Wallet> {
 fn BlockchainPopup() -> Element {
     let mut popup: PopupService = use_context();
     let mut selected_blockchain = use_signal(|| None);
+    
     
     rsx! {
         div {
@@ -93,12 +109,7 @@ fn BlockchainPopup() -> Element {
 #[component]
 fn WalletPopup(selected_blockchain: Signal<Option<Blockchain>>) -> Element {
     let mut popup: PopupService = use_context();
-    // let wallets = selected_blockchain.as_ref().map(get_wallets).unwrap_or_default();
-    // let wallets = use_signal(|| Vec::new()); // Initialize as an empty vector
-
-    // if let Some(blockchain) = selected_blockchain {
-    //     wallets.set(get_wallets(&blockchain)); // Update it when blockchain is selected
-    // }
+    let selected_wallet = use_signal(|| None::<Wallet>);
 
     let wallets = get_wallets(selected_blockchain.read().as_ref());
 
@@ -119,26 +130,19 @@ fn WalletPopup(selected_blockchain: Signal<Option<Blockchain>>) -> Element {
                 h2 { class: "text-white text-lg font-bold", "Choose Wallet" }
                 div {
                     class: "flex flex-col gap-4 mt-4",
-                    // for wallet in wallets.iter() {
-                    //     button {
-                    //         class: "flex items-center gap-4 px-4 py-3 border rounded-md text-white bg-gray-800 hover:bg-gray-700",
-                    //         onclick: move |_| {
-                    //             println!("Connecting to {}...", wallet.name);
-                    //         },
-                    //         img { class: "w-8 h-8", src: "{wallet.image_url}" }
-                    //         span { "{wallet.name}" }
-                    //     }
-                    // }
                     for wallet in wallets.clone().into_iter() {
                         button {
                             class: "flex items-center gap-4 px-4 py-3 border rounded-md text-white bg-gray-800 hover:bg-gray-700",
                             onclick: {
+                                let wallet_clone = wallet.clone();
                                 move |_| {
-                                    println!("Connecting to {}...", wallet.name.to_string());
-                                }},
-                                img { class: "w-8 h-8", src: "{wallet.image_url}" }
-                                span { "{wallet.name}" }
+                                    println!("Connecting to {}...", wallet_clone.name.to_string());
+                                    selected_wallet.set(Some(wallet_clone.clone()));
+                                    popup.with_title("Complete Your Profile").open(NameSettingPopup());
+                                }
                             },
+                            img { class: "w-8 h-8", src: "{wallet.image_url}" }
+                            span { "{wallet.name}" }
                         }
                     }
                 }
@@ -146,6 +150,124 @@ fn WalletPopup(selected_blockchain: Signal<Option<Blockchain>>) -> Element {
         }
     }
 }
+
+
+#[component]
+fn NameSettingPopup() -> Element {
+    let mut popup: PopupService = use_context();
+    
+    // State for form inputs
+    let display_name = use_signal(|| String::new());
+    let email = use_signal(|| String::new());
+    let terms_accepted = use_signal(|| false);
+    let newsletter_accepted = use_signal(|| false);
+    
+    // Validation state
+    let is_name_valid = use_signal(|| false);
+    let is_email_valid = use_signal(|| false);
+    
+    // Computed property for button disabled state
+    let is_form_valid = *is_name_valid.read() && *is_email_valid.read() && *terms_accepted.read();
+    
+    // Update validation when inputs change
+    use_effect(move || {
+        is_name_valid.set(ValidationService::is_valid_display_name(&display_name.read()));
+        is_email_valid.set(ValidationService::is_valid_email(&email.read()));
+    });
+
+    rsx! {
+        div {
+            class: if popup.is_opened() { "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-md z-[101]" } else { "hidden" },
+            onclick: move |_| popup.close(),
+
+            if popup.is_opened() {
+                div {
+                    class: "bg-black border-neutral-800 relative border px-8 py-6 shadow-lg w-[600px]",
+                    onclick: move |e| e.stop_propagation(),
+                    button {
+                        class: "absolute top-4 right-4 cursor-pointer text-white",
+                        onclick: move |_| popup.close(),
+                        "✕"
+                    }
+                    h2 { class: "text-white text-xl font-bold", "You are almost there!" }
+                    p { class: "text-white/80 mt-2", "Choose a display name and enter your email address" }
+                    
+                    div { class: "mt-6",
+                        label { class: "block text-white mb-2", "Agit Name" }
+                        input {
+                            class: "w-full bg-transparent border border-neutral-700 text-white p-3 rounded-sm focus:outline-none focus:border-blue-500",
+                            placeholder: "name120",
+                            value: "{display_name}",
+                            oninput: move |e| {
+                                display_name.set(e.value.clone());
+                                is_name_valid.set(ValidationService::is_valid_display_name(&e.value));
+                            }
+                        }
+                    }
+                    
+                    div { class: "mt-6",
+                        label { class: "block text-white mb-2", "Agit Name" }
+                        input {
+                            class: "w-full bg-transparent border border-neutral-700 text-white p-3 rounded-sm focus:outline-none focus:border-blue-500",
+                            placeholder: "email@email.com",
+                            value: "{email}",
+                            oninput: move |e| {
+                                email.set(e.value.clone());
+                                is_email_valid.set(ValidationService::is_valid_email(&e.value));
+                            }
+                        }
+                    }
+                    
+                    div { class: "mt-6 flex items-center gap-2",
+                        input {
+                            r#type: "checkbox",
+                            checked: "{terms_accepted}",
+                            onchange: move |_| {
+                                terms_accepted.set(!*terms_accepted.read());
+                            }
+                        }
+                        label { class: "text-white", 
+                            "I have read and accept the "
+                            span { class: "text-blue-500 cursor-pointer", "Terms of Service" }
+                            "."
+                        }
+                    }
+                    
+                    div { class: "mt-3 flex items-center gap-2",
+                        input {
+                            r#type: "checkbox",
+                            checked: "{newsletter_accepted}",
+                            onchange: move |_| {
+                                newsletter_accepted.set(!*newsletter_accepted.read());
+                            }
+                        }
+                        label { class: "text-white", "I want to receive announcements and news from d.AgitÄt." }
+                    }
+                    
+                    div { class: "mt-6",
+                        button {
+                            class: if is_form_valid {
+                                "w-full bg-white text-black py-3 font-medium cursor-pointer"
+                            } else {
+                                "w-full bg-gray-500 text-gray-300 py-3 font-medium cursor-not-allowed opacity-50"
+                            },
+                            disabled: !is_form_valid,
+                            onclick: move |_| {
+                                if is_form_valid {
+                                    println!("Sign-up completed! Name: {}, Email: {}", display_name.read(), email.read());
+                                    popup.close();
+                                    // TODO Account creation func...
+                                }
+                            },
+                            "Finished Sign-up"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 #[component]
 pub fn Header(lang: Language) -> Element {
