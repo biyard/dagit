@@ -1,7 +1,7 @@
 use crate::{components::ServiceLogo, routes::Route};
 use dioxus::prelude::*;
 use dioxus_popup::PopupService;
-use dioxus_translate::{Language, translate};
+use dioxus_translate::{translate, Language};
 use i18n::HeaderTranslate;
 mod i18n;
 
@@ -30,7 +30,6 @@ impl ValidationService {
         email.contains('@') && email.contains('.')
     }
 }
-
 
 fn get_wallets(blockchain: Option<&Blockchain>) -> Vec<Wallet> {
     match blockchain {
@@ -62,8 +61,7 @@ fn get_wallets(blockchain: Option<&Blockchain>) -> Vec<Wallet> {
 fn BlockchainPopup() -> Element {
     let mut popup: PopupService = use_context();
     let mut selected_blockchain = use_signal(|| None);
-    
-    
+
     rsx! {
         div {
             class: if popup.is_opened() { "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-md z-[101]" } else { "hidden" },
@@ -114,35 +112,36 @@ fn WalletPopup(selected_blockchain: Signal<Option<Blockchain>>) -> Element {
     let wallets = get_wallets(selected_blockchain.read().as_ref());
 
     rsx! {
-    div {
-        class: if popup.is_opened() { "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-md z-[101]" } else { "hidden" },
-        onclick: move |_| popup.close(),
+        div {
+            class: if popup.is_opened() { "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center backdrop-blur-md z-[101]" } else { "hidden" },
+            onclick: move |_| popup.close(),
 
-        if popup.is_opened() {
-            div {
-                class: "bg-black border-neutral-800 relative border px-8 py-6 shadow-lg",
-                onclick: move |e| e.stop_propagation(),
-                button {
-                    class: "absolute top-4 right-4 cursor-pointer text-white",
-                    onclick: move |_| popup.close(),
-                    "✕"
-                }
-                h2 { class: "text-white text-lg font-bold", "Choose Wallet" }
+            if popup.is_opened() {
                 div {
-                    class: "flex flex-col gap-4 mt-4",
-                    for wallet in wallets.clone().into_iter() {
-                        button {
-                            class: "flex items-center gap-4 px-4 py-3 border rounded-md text-white bg-gray-800 hover:bg-gray-700",
-                            onclick: {
-                                let wallet_clone = wallet.clone();
-                                move |_| {
-                                    println!("Connecting to {}...", wallet_clone.name.to_string());
-                                    selected_wallet.set(Some(wallet_clone.clone()));
-                                    popup.with_title("Complete Your Profile").open(NameSettingPopup());
-                                }
-                            },
-                            img { class: "w-8 h-8", src: "{wallet.image_url}" }
-                            span { "{wallet.name}" }
+                    class: "bg-black border-neutral-800 relative border px-8 py-6 shadow-lg",
+                    onclick: move |e| e.stop_propagation(),
+                    button {
+                        class: "absolute top-4 right-4 cursor-pointer text-white",
+                        onclick: move |_| popup.close(),
+                        "✕"
+                    }
+                    h2 { class: "text-white text-lg font-bold", "Choose Wallet" }
+                    div {
+                        class: "flex flex-col gap-4 mt-4",
+                        for wallet in wallets.clone().into_iter() {
+                            button {
+                                class: "flex items-center gap-4 px-4 py-3 border rounded-md text-white bg-gray-800 hover:bg-gray-700",
+                                onclick: {
+                                    let wallet_clone = wallet.clone();
+                                    move |_| {
+                                        println!("Connecting to {}...", wallet_clone.name.to_string());
+                                        selected_wallet.set(Some(wallet_clone.clone()));
+                                        popup.with_title("Complete Your Profile").open(NameSettingPopup());
+                                    }
+                                },
+                                img { class: "w-8 h-8", src: "{wallet.image_url}" }
+                                span { "{wallet.name}" }
+                            }
                         }
                     }
                 }
@@ -151,27 +150,28 @@ fn WalletPopup(selected_blockchain: Signal<Option<Blockchain>>) -> Element {
     }
 }
 
-
 #[component]
 fn NameSettingPopup() -> Element {
     let mut popup: PopupService = use_context();
-    
+
     // State for form inputs
     let display_name = use_signal(|| String::new());
     let email = use_signal(|| String::new());
     let terms_accepted = use_signal(|| false);
     let newsletter_accepted = use_signal(|| false);
-    
+
     // Validation state
     let is_name_valid = use_signal(|| false);
     let is_email_valid = use_signal(|| false);
-    
+
     // Computed property for button disabled state
     let is_form_valid = *is_name_valid.read() && *is_email_valid.read() && *terms_accepted.read();
-    
+
     // Update validation when inputs change
     use_effect(move || {
-        is_name_valid.set(ValidationService::is_valid_display_name(&display_name.read()));
+        is_name_valid.set(ValidationService::is_valid_display_name(
+            &display_name.read(),
+        ));
         is_email_valid.set(ValidationService::is_valid_email(&email.read()));
     });
 
@@ -191,7 +191,7 @@ fn NameSettingPopup() -> Element {
                     }
                     h2 { class: "text-white text-xl font-bold", "You are almost there!" }
                     p { class: "text-white/80 mt-2", "Choose a display name and enter your email address" }
-                    
+
                     div { class: "mt-6",
                         label { class: "block text-white mb-2", "Agit Name" }
                         input {
@@ -204,7 +204,7 @@ fn NameSettingPopup() -> Element {
                             }
                         }
                     }
-                    
+
                     div { class: "mt-6",
                         label { class: "block text-white mb-2", "Agit Name" }
                         input {
@@ -217,7 +217,7 @@ fn NameSettingPopup() -> Element {
                             }
                         }
                     }
-                    
+
                     div { class: "mt-6 flex items-center gap-2",
                         input {
                             r#type: "checkbox",
@@ -226,13 +226,13 @@ fn NameSettingPopup() -> Element {
                                 terms_accepted.set(!*terms_accepted.read());
                             }
                         }
-                        label { class: "text-white", 
+                        label { class: "text-white",
                             "I have read and accept the "
                             span { class: "text-blue-500 cursor-pointer", "Terms of Service" }
                             "."
                         }
                     }
-                    
+
                     div { class: "mt-3 flex items-center gap-2",
                         input {
                             r#type: "checkbox",
@@ -243,7 +243,7 @@ fn NameSettingPopup() -> Element {
                         }
                         label { class: "text-white", "I want to receive announcements and news from d.AgitÄt." }
                     }
-                    
+
                     div { class: "mt-6",
                         button {
                             class: if is_form_valid {
@@ -267,7 +267,6 @@ fn NameSettingPopup() -> Element {
         }
     }
 }
-
 
 #[component]
 pub fn Header(lang: Language) -> Element {
