@@ -305,7 +305,7 @@ pub fn Header(lang: Language) -> Element {
                 }
             } else {
                 button {
-                    class: "bg-white text-black px-5 py-2.5 rounded-md hover:bg-gray-200 transition-all",
+                    class: "text-white cursor-pointer px-5 py-2.5 transition-all",
                     onclick: move |_| {
                         popup.with_title("Choose Blockchain").open(BlockchainPopup());
                     },
