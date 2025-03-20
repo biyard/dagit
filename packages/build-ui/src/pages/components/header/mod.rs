@@ -65,45 +65,45 @@ fn get_wallets(blockchain: Option<&Blockchain>) -> Vec<Wallet> {
         Some(Blockchain::Ethereum) => vec![
             Wallet {
                 name: "MetaMask",
-                image_url: "https://icons8.com/icon/Oi106YG9IoLv/metamask-logo",
+                image_url: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
             },
             Wallet {
                 name: "Trust Wallet",
-                image_url: "https://icons8.com/icon/Oi106YG9IoLv/metamask-logo",
+                image_url: "https://trustwallet.com/assets/images/media/assets/trust_platform_icon.svg",
             },
             Wallet {
                 name: "MetaMask",
-                image_url: "https://icons8.com/icon/Oi106YG9IoLv/metamask-logo",
+                image_url: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
             },
             Wallet {
                 name: "Trust Wallet",
-                image_url: "https://icons8.com/icon/Oi106YG9IoLv/metamask-logo",
+                image_url: "https://trustwallet.com/assets/images/media/assets/trust_platform_icon.svg",
             },
             Wallet {
                 name: "MetaMask",
-                image_url: "https://icons8.com/icon/Oi106YG9IoLv/metamask-logo",
+                image_url: "https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg",
             },
         ],
         Some(Blockchain::Solana) => vec![
             Wallet {
                 name: "Phantom",
-                image_url: "https://cryptologos.cc/logos/solana-sol-logo.svg",
+                image_url: "https://phantom.app/img/phantom-logo.svg",
             },
             Wallet {
                 name: "Solflare",
-                image_url: "https://cryptologos.cc/logos/solana-sol-logo.svg",
+                image_url: "https://solflare.com/assets/logo/solflare-logo.svg",
             },
             Wallet {
                 name: "Phantom",
-                image_url: "https://cryptologos.cc/logos/solana-sol-logo.svg",
+                image_url: "https://phantom.app/img/phantom-logo.svg",
             },
             Wallet {
                 name: "Solflare",
-                image_url: "https://cryptologos.cc/logos/solana-sol-logo.svg",
+                image_url: "https://solflare.com/assets/logo/solflare-logo.svg",
             },
             Wallet {
                 name: "Phantom",
-                image_url: "https://cryptologos.cc/logos/solana-sol-logo.svg",
+                image_url: "https://phantom.app/img/phantom-logo.svg",
             },
         ],
         None => Vec::new(),
