@@ -6,7 +6,6 @@ mod components;
 mod layout;
 mod page;
 mod controller;
-
 mod agits;
 
 pub use _route::*;
