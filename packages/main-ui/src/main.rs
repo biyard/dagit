@@ -41,8 +41,8 @@ fn load_tailwindcss() -> Element {
     }
 }
 
-// #[cfg(feature = "lambda")]
-// #[allow(dead_code)]
-// fn load_tailwindcss() -> Element {
-//     rsx! {}
-// }
+#[cfg(feature = "lambda")]
+#[allow(dead_code)]
+fn load_tailwindcss() -> Element {
+    rsx! {}
+}

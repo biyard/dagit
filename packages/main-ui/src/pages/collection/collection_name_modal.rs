@@ -1,14 +1,12 @@
 use dioxus::prelude::*;
 
-use crate::pages::collection::SuccessModal;
 #[component]
 pub fn CollectionNameModal(
     show: bool,
     on_back: EventHandler<()>,
-    on_add: EventHandler<()>
+    on_add: EventHandler<String> // Changed to pass the collection name
 ) -> Element {
     let mut collection_name = use_signal(|| String::new());
-    let mut show_success = use_signal(|| false);
     
     if !show {
         return rsx!(div {});
@@ -101,9 +99,9 @@ pub fn CollectionNameModal(
                         }
                         button { 
                             class: "px-4 py-2 text-l bg-white text-black hover:bg-gray-200",
-                            onclick: move |_|{
-                               
-                                show_success.set(true);
+                            onclick: move |_| {
+                                // Pass the collection name to the parent
+                                on_add.call(collection_name.read().clone());
                             },
                             "Add Collection"
                         }
@@ -111,15 +109,6 @@ pub fn CollectionNameModal(
                 }
             }
         }
-
-        // Add the SuccessModal
-        SuccessModal {
-            show: *show_success.read(),
-            on_confirm: move |_| {
-                show_success.set(false);
-                on_add.call(());
-            }
-        }
-
     }
 }
+

@@ -1,8 +1,9 @@
 use dioxus::prelude::*;
 use dioxus_translate::Language;
+// use crate::global_attributes::lang;
 
 #[allow(unused)]
-use crate::layout::RootLayout;
+use crate::layout::{RootLayout, SidebarLayout};
 
 use crate::pages::prelude::*;
 // use crate::pages::NotFoundPage;
@@ -13,13 +14,17 @@ pub enum Route {
     #[nest("/:lang")]
         #[route("/platform")]
         PlatformPage { lang : Language},
-        #[route("/collections")]
-        CollectionsPage { lang: Language },
         #[layout(RootLayout)]
             #[route("/")]
-            MainPage { lang: Language },
-
+            MainPage { lang: Language }, 
+            
         #[end_layout]
+            //  This is for all the route using thesame sidebar
+            #[layout(SidebarLayout)]
+               #[route("/collections")]
+               CollectionsPage { lang: Language },
+            #[end_layout]
+
 
     #[end_nest]
     

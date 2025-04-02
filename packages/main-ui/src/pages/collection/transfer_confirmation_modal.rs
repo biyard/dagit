@@ -1,19 +1,12 @@
 use dioxus::prelude::*;
 
-use crate::pages::collection::CollectionNameModal;
-
-#[allow(unused_variables)]
 #[component]
 pub fn TransferConfirmationModal(
     show: bool,
     selected_count: usize,
     on_back: EventHandler<()>,
-    on_continue: EventHandler<()>
+    on_continue: EventHandler<String> // Changed to pass the collection name
 ) -> Element {
-    let mut show_name_modal = use_signal(|| false);
-
-
-
     if !show {
         return rsx! (div{});
     }
@@ -68,8 +61,8 @@ pub fn TransferConfirmationModal(
                         button { 
                             class: "px-10 py-3 text-l bg-white  text-black hover:bg-gray-200",
                             onclick: move |_| {
-                                show_name_modal.set(true);
-                                // on_continue.call(());
+                                // Pass an empty string to indicate we want to continue to the collection name modal
+                                on_continue.call(String::new());
                             },
                             "Continue"
                         }
@@ -77,13 +70,6 @@ pub fn TransferConfirmationModal(
                 }
             }
         }
-        CollectionNameModal{
-            show: *show_name_modal.read(),
-            on_back: move |_| show_name_modal.set(false),
-            on_add: move |_| {
-                show_name_modal.set(false);
-                on_continue.call(());
-            }
-        }
     }
 }
+

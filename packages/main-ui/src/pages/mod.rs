@@ -1,5 +1,5 @@
 mod _route;
-mod collection;
+pub mod collection;
 mod main;
 mod platform;
 

@@ -1,19 +1,21 @@
 use dioxus::prelude::*;
-use crate::pages::collection::TransferConfirmationModal;
-#[warn(unused_imports)]
-use crate::pages::collection::Artwork;
-#[component]
+use crate::pages::collection::models::Artwork;
 
+#[component]
 #[allow(unused_variables)]
-pub fn NewCollectionModal(show: bool, on_close: EventHandler<()>, artworks: Signal<Vec<Artwork>>) -> Element {
+pub fn NewCollectionModal(
+    show: bool, 
+    on_close: EventHandler<()>, 
+    artworks: Signal<Vec<Artwork>>,
+    on_select_artworks: EventHandler<Vec<usize>>
+) -> Element {
     // Use `use_signal` for a Vec<usize> to store selected artwork IDs
     let mut selected_artworks = use_signal(|| Vec::<usize>::new());
-    let mut show_transfer_modal = use_signal(|| false);
-    // let mut show_new_collection_modal = use_signal(|| false);
-
+    
     if !show {
         return rsx!(div {});
     }
+    
     rsx! {
         // Modal backdrop with purple glow effect
         div {
@@ -218,9 +220,9 @@ pub fn NewCollectionModal(show: bool, on_close: EventHandler<()>, artworks: Sign
 
                     // Footer
                     div { class: "p-4 border-t border-[#333] flex flex-col justify-end self-end",
-                    div { class: "text-sm text-gray-400 mb-5",
-                    "{selected_artworks.read().len()} artworks have been selected."
-                }
+                        div { class: "text-sm text-gray-400 mb-5",
+                            "{selected_artworks.read().len()} artworks have been selected."
+                        }
                         div { class: "flex gap-4",
                             button {
                                 class: "px-4 py-2 text-sm text-gray-400 hover:text-white",
@@ -230,30 +232,18 @@ pub fn NewCollectionModal(show: bool, on_close: EventHandler<()>, artworks: Sign
                             button {
                                 class: "px-4 py-2 text-sm bg-white text-black hover:bg-gray-200",
                                 onclick: move |_| {
-                                    // on_close.call(());
-                                   if !selected_artworks.read().is_empty() {
-                                       show_transfer_modal.set(true);
+                                    if !selected_artworks.read().is_empty() {
+                                        // Pass selected artworks to parent component
+                                        on_select_artworks.call(selected_artworks.read().clone());
                                     }
-                                    
                                 },
                                 "Confirm"
                             }
-
-                        
                         }
                     }
                 }
             }
         }
-        TransferConfirmationModal {
-            show: *show_transfer_modal.read(),
-            selected_count: selected_artworks.read().len(),
-            on_back: move |_| show_transfer_modal.set(false),
-            on_continue: move |_| {
-                on_close.call(());
-                // Continue with the transfer
-                show_transfer_modal.set(false);
-            }
-        }
     }
 }
+

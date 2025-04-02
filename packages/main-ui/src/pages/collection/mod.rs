@@ -1,4 +1,4 @@
-pub mod dashboard;
+pub mod page;
 
 pub mod service_logo;
 pub mod filter_sidebar;
@@ -11,7 +11,7 @@ pub mod collection_name_modal;
 pub mod success_modal;
 pub mod models;
 
-pub use dashboard::CollectionsPage;
+pub use page::CollectionsPage;
 pub use service_logo::ServiceLogo;
 pub use filter_sidebar::FilterSidebar;
 pub use filter_dropdown::FilterDropdown;
