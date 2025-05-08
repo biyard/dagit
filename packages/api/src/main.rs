@@ -161,20 +161,18 @@ pub mod dagit_tests {
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        let mut claims = Claims {
+        let  claims = Claims {
             sub: user.id.to_string(),
             exp: now + 3600,
             role: by_types::Role::User,
             custom: HashMap::new(),
         };
-        let token = by_axum::auth::generate_jwt(&mut claims).unwrap();
+        let token = "jwt_token".to_string();
         (claims, token)
     }
 
     pub async fn setup() -> Result<TestContext> {
-        if option_env!("JWT_SECRET_KEY").is_none() {
-            unsafe { std::env::set_var("JWT_SECRET_KEY", "default_test_secret_key"); }
-        }
+        
         let conf = config::get();
         let pool = if let DatabaseConfig::Postgres { url, pool_size } = conf.database {
             PgPoolOptions::new()
