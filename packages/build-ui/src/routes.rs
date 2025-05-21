@@ -21,28 +21,40 @@ pub enum Route {
                     #[route("/shipping-label")]
                         ShippingLabelPage { lang: Language, agit_id: i64 },
                 #[end_nest]
-
                 #[nest("/management")]
-                    #[route("/artworks")]
-                        ArtworkPage { lang: Language, agit_id: i64 },
-                    #[route("/artworks/new")]
-                        NewArtworkPage { lang: Language, agit_id: i64 },
-                    #[route("/collections")]
-                        CollectionPage { lang: Language, agit_id: i64 },
-                    #[route("/collections/:collection_id")]
-                        CollectionDetailPage { lang: Language, agit_id: i64, collection_id:i64 },
-                    #[route("/artists")]
-                        ArtistPage { lang: Language, agit_id: i64 },
-                    #[route("/artists/:artist_id")]
-                        ArtistDetailPage { lang: Language, agit_id: i64, artist_id: i64 },
-                    #[route("/artists/:artist_id/edit")]
-                        EditArtistPage { lang: Language, agit_id: i64, artist_id: i64 },
-                    #[route("/artists/new")]
-                        NewArtistPage { lang: Language, agit_id: i64},
-                    #[route("/collectors")]  
-                        CollectorsPage { lang: Language, agit_id: i64 },
-                    #[route("/collectors/:collector_id")]
-                        CollectorDetailPage { lang: Language, agit_id: i64, collector_id: i64 },
+                    #[nest("/artworks")]
+                        #[route("/")]
+                            ArtworkPage { lang: Language, agit_id: i64 },
+                        // #[route("/:artwork_id")]
+                        //     ArtworkDetailPage { lang: Language, agit_id: i64, artwork_id: i64 },
+                        #[route("/create")]
+                            CreateArtworkPage { lang: Language, agit_id: i64 },
+                        // #[route("/:artwork_id/edit")]
+                        //     EditArtworkPage { lang: Language, agit_id: i64, artwork_id: i64 },
+                    #[end_nest]
+                    #[nest("/collections")]
+                        #[route("/collection")]
+                            CollectionPage { lang: Language, agit_id: i64 },
+                        #[route("/:collection_id")]
+                            CollectionDetailPage { lang: Language, agit_id: i64, collection_id:i64 },
+                    #[end_nest] 
+                    #[nest("/artists")]
+                        #[route("/")]
+                            ArtistPage { lang: Language, agit_id: i64 },    
+                        #[route("/:artist_id")]
+                            ArtistDetailPage { lang: Language, agit_id: i64, artist_id: i64 },
+                        #[route("/create")]
+                            CreateArtistPage { lang: Language, agit_id: i64},    
+                        #[route("/:artist_id/edit")]
+                            EditArtistPage { lang: Language, agit_id: i64, artist_id: i64 },
+                        
+                    #[end_nest] 
+                    #[nest("/collectors")]
+                        #[route("/")]  
+                            CollectorPage { lang: Language, agit_id: i64 },
+                        #[route("/:collector_id")]
+                            CollectorDetailPage { lang: Language, agit_id: i64, collector_id: i64 },
+                    #[end_nest]
                 #[end_nest]
 
                 #[nest("/hub")]

@@ -1,4 +1,4 @@
-use crate::pages::agits::_id::management::collectors::controllers::Controller;
+use crate::pages::agits::_id::management::collectors::controller::Controller;
 use crate::pages::agits::_id::management::collectors::i18n::CollectorsTranslate;
 use crate::routes::Route;
 use bdk::prelude::*;

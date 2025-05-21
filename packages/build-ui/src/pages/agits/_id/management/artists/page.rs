@@ -5,7 +5,7 @@ use bdk::prelude::*;
 
 use super::i18n::ArtistTranslate;
 
-use super::controllers::Controller;
+use super::controller::Controller;
 #[component]
 #[allow(unused_variables)]
 pub fn ArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {

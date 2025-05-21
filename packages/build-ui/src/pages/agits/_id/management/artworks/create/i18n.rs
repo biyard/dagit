@@ -1,7 +1,7 @@
 use bdk::prelude::*;
 
 translate! {
-   NewArtworkPageTranslate;
+   CreateArtworkPageTranslate;
    item_details:{
       en: "Item Details",
       ko: "아이템 상세정보",

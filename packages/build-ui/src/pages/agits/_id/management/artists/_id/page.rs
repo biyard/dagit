@@ -7,7 +7,7 @@ use crate::components::input::{Input2, TextArea};
 use crate::components::search_filter_bar::SearchFilterBar;
 use crate::pages::agits::_id::management::artists::_id::i18n::EditArtistPageTranslate;
 use crate::pages::agits::_id::management::artists::components::SingleArtistTable;
-use crate::pages::agits::_id::management::artists::controllers::Controller;
+use crate::pages::agits::_id::management::artists::controller::Controller;
 use crate::pages::agits::_id::management::artists::i18n::ArtistTranslate;
 use crate::pages::agits::_id::management::components::NftTable;
 use crate::routes::Route;

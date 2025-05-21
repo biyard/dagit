@@ -7,7 +7,7 @@ use crate::{
     routes::Route,
 };
 
-use super::controllers::Controller;
+use super::controller::Controller;
 use super::i18n::ArtworkTranslate;
 use bdk::prelude::*;
 #[allow(unused_variables)]

@@ -40,7 +40,7 @@ pub fn CollectorDetailPage(
                 div { class: "flex flex-col mb-6",
                     div { class: "flex items-center",
                         Link {
-                            to: Route::CollectorsPage {
+                            to: Route::CollectorPage {
                                 lang,
                                 agit_id: agit_id(),
                             },

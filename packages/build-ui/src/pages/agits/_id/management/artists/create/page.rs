@@ -10,13 +10,13 @@ use crate::{
         input::{Input2, TextArea},
     },
     pages::agits::_id::management::artists::{
-        controllers::Controller, new::i18n::NewArtistPageTranslate,
+        controller::Controller, create::i18n::CreateArtworkPageTranslate,
     },
     routes::Route,
 };
 #[component]
-pub fn NewArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
-    let tr: NewArtistPageTranslate = translate(&lang);
+pub fn CreateArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
+    let tr: CreateArtworkPageTranslate = translate(&lang);
     let mut ctrl = Controller::new(lang, agit_id)?;
     let _profile_picture = use_signal(|| None::<String>);
     let mut is_dropdown_open = use_signal(|| false);

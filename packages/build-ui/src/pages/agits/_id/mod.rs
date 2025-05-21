@@ -15,6 +15,6 @@ pub use extension_tool::ExtensionToolPage;
 pub use hub::{DaoPage, FaqPage, OraclePage};
 pub use management::{
     ArtistDetailPage, ArtistPage, ArtworkPage, CollectionDetailPage, CollectionPage,
-    CollectorDetailPage, CollectorsPage, EditArtistPage, NewArtistPage, NewArtworkPage,
+    CollectorDetailPage, CollectorPage, CreateArtistPage, CreateArtworkPage, EditArtistPage,
 };
 pub use orders::{SalesRequestPage, ShippingLabelPage};

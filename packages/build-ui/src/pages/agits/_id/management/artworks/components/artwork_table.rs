@@ -1,5 +1,5 @@
 use crate::pages::agits::_id::management::artworks::{
-    controllers::Controller, i18n::ArtworkTranslate,
+    controller::Controller, i18n::ArtworkTranslate,
 };
 use bdk::prelude::*;
 use by_components::icons::{arrows, validations};

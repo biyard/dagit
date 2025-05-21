@@ -1,6 +1,6 @@
 use bdk::prelude::*;
 translate! {
-    NewArtistPageTranslate;
+    CreateArtworkPageTranslate;
     title:{
         en: "New Artist",
         ko: "신규 작가",

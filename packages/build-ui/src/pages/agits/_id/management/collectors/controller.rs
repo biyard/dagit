@@ -1,5 +1,4 @@
 #![allow(unused)]
-use crate::pages::agits::_id::management::Activity;
 use bdk::prelude::{dioxus_popup::PopupService, *};
 use common::tables::{
     collectors::Collector as CollectorModel,
@@ -7,7 +6,6 @@ use common::tables::{
         CollectorByIdAction, CollectorCreateRequest, CollectorDeleteRequest, CollectorQuery,
     },
 };
-use std::io::Read;
 use wasm_bindgen_futures::spawn_local;
 
 #[derive(Debug, Clone, Copy, DioxusController)]
@@ -18,7 +16,7 @@ pub struct Controller {
 }
 impl Controller {
     pub fn new(lang: Language, agit_id: ReadOnlySignal<i64>) -> Result<Self, RenderError> {
-        let mut popup: PopupService = use_context();
+        let popup: PopupService = use_context();
 
         let res = use_server_future(move || async move {
             let endpoint = crate::config::get().api_url;

@@ -3,13 +3,9 @@ use super::i18n::{
     CollectionNameInputModalTranslate, NewCollectionModalTranslate, SuccessModalTranslate,
     TransferConfirmationModalTranslate,
 };
-use super::models::*;
 use crate::config::Config;
-use crate::pages::agits::_id::management::{
-    Activity,
-    collections::components::{
-        CollectionNameInputModal, NewCollectionModal, SuccessModal, TransferConfirmationModal,
-    },
+use crate::pages::agits::_id::management::collections::components::{
+    CollectionNameInputModal, NewCollectionModal, SuccessModal, TransferConfirmationModal,
 };
 use bdk::prelude::{dioxus_popup::PopupService, *};
 use common::tables::artworks;
@@ -47,8 +43,6 @@ impl Controller {
                 .await
                 .unwrap_or_default()
         })?;
-
-        tracing::debug!("res: {:?}", res);
 
         let collections = use_signal(|| {
             (1..15)

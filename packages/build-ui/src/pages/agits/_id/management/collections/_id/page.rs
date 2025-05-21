@@ -2,7 +2,7 @@ use bdk::prelude::*;
 
 use crate::components::search_filter_bar::SearchFilterBar;
 use crate::components::tab_button::TabButton;
-use crate::pages::agits::_id::management::collections::controllers::Controller;
+use crate::pages::agits::_id::management::collections::controller::Controller;
 use crate::pages::agits::_id::management::collections::i18n::CollectionTranslate;
 
 use crate::pages::agits::_id::management::components::{ActivityTable, NftTable, OwnedTable};

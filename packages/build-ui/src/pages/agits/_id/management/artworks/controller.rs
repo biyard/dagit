@@ -7,7 +7,27 @@ use common::tables::{
 
 use crate::routes::Route;
 
-use super::model::ArtworkInputField;
+#[derive(Clone, Debug, PartialEq)]
+pub struct ArtworkInputField {
+    pub display_name: String,
+    pub ways_to_sell: String,
+    pub rarity: String,
+    pub stock: String,
+    pub price: String,
+    pub lock_up_period: String,
+    pub collection: String,
+    pub medium: String,
+    pub theme: String,
+    pub art_style: String,
+    pub material: String,
+    pub color: String,
+    pub size: String,
+    pub weight: String,
+    pub year: String,
+    pub royalty: String,
+    pub description: String,
+    pub img_url: String,
+}
 
 #[derive(Debug, Clone, Copy, DioxusController)]
 pub struct Controller {
@@ -106,7 +126,7 @@ impl Controller {
     pub fn open_new_artwork_page(&self) {
         let navigate = use_navigator();
 
-        if let Some(err) = navigate.push(Route::NewArtworkPage {
+        if let Some(err) = navigate.push(Route::CreateArtworkPage {
             lang: self.lang,
             agit_id: self.agit_id.with(|id| *id),
         }) {

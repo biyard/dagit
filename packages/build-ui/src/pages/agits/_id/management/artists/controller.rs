@@ -228,7 +228,7 @@ impl Controller {
 
     pub fn open_new_artist_form(&self) {
         let navigate = use_navigator();
-        navigate.push(Route::NewArtistPage {
+        navigate.push(Route::CreateArtistPage {
             lang: self.lang,
             agit_id: self.agit_id.with(|id| *id),
         });
@@ -249,15 +249,17 @@ impl Controller {
         let ctrl = self.clone();
 
         popup
-            .open(rsx!(ConfirmRemoveArtistModal {
-                on_back: move |_| {
-                    popup.close();
-                },
-                on_remove: move |_| {
-                    ctrl.confirm_name_removal_modal();
-                },
-                lang: self.lang,
-            }))
+            .open(rsx!(
+                ConfirmRemoveArtistModal {
+                    on_back: move |_| {
+                        popup.close();
+                    },
+                    on_remove: move |_| {
+                        ctrl.confirm_name_removal_modal();
+                    },
+                    lang: self.lang,
+                }
+            ))
             .with_id("remove-artist-modal")
             .with_title(tr.title);
     }
@@ -267,15 +269,17 @@ impl Controller {
         let tr: RemoveArtistNameModalTranslate = translate(&self.lang);
         let mut ctrl = self.clone();
         popup
-            .open(rsx!(RemoveArtistModal {
-                on_back: move |_| {
-                    popup.close();
-                },
-                on_remove: move |_| {
-                    ctrl.success_modal();
-                },
-                lang: self.lang,
-            }))
+            .open(rsx!(
+                RemoveArtistModal {
+                    on_back: move |_| {
+                        popup.close();
+                    },
+                    on_remove: move |_| {
+                        ctrl.success_modal();
+                    },
+                    lang: self.lang,
+                }
+            ))
             .with_id("remove-artistName-modal")
             .with_title(tr.title);
     }
@@ -285,11 +289,13 @@ impl Controller {
         let tr: RemovalSuccessModalTranslate = translate(&self.lang);
         let mut ctrl = self.clone();
         popup
-            .open(rsx!(RemovalSuccessModal {
-                on_back: move |_| {},
-                on_confirm: move |_| {},
-                lang: self.lang,
-            }))
+            .open(rsx!(
+                RemovalSuccessModal {
+                    on_back: move |_| {},
+                    on_confirm: move |_| {},
+                    lang: self.lang,
+                }
+            ))
             .with_id("remove-artist-modal-success")
             .with_title(tr.title);
     }

@@ -1,4 +1,4 @@
-use super::controllers::Controller;
+use super::controller::Controller;
 use super::i18n::CollectionTranslate;
 use crate::pages::agits::_id::management::collections::components::CollectionTable;
 #[allow(unused_imports)]

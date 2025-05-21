@@ -1,7 +1,7 @@
 use crate::components::button::ButtonWithIcon;
 use crate::components::{dropdown_input::DropdownInput, input::Input2};
-use crate::pages::agits::_id::management::artworks::controllers::Controller;
-use crate::pages::agits::_id::management::artworks::new::i18n::NewArtworkPageTranslate;
+use crate::pages::agits::_id::management::artworks::controller::Controller;
+use crate::pages::agits::_id::management::artworks::create::i18n::CreateArtworkPageTranslate;
 use bdk::prelude::by_components::icons::other_devices;
 use bdk::prelude::*;
 use by_components::icons::arrows;
@@ -9,7 +9,7 @@ use by_components::icons::arrows;
 #[component]
 pub fn ItemDetailsTab(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
     let mut ctrl = Controller::new(lang, agit_id)?;
-    let tr: NewArtworkPageTranslate = translate(&lang);
+    let tr: CreateArtworkPageTranslate = translate(&lang);
     rsx! {
         div { class: "mb-8",
             div { class: "flex items-center mb-4",

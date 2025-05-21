@@ -1,8 +1,8 @@
 use crate::{
     components::{input::BottomBorderInput, tab_button::TabButton},
     pages::agits::_id::management::artworks::{
-        controllers::Controller,
-        new::{ItemDetailsTab, component::ArtInfoTab, i18n::NewArtworkPageTranslate},
+        controller::Controller,
+        create::{ItemDetailsTab, components::ArtInfoTab, i18n::CreateArtworkPageTranslate},
     },
 };
 use bdk::prelude::{by_components::icons::security, *};
@@ -13,10 +13,10 @@ pub enum ActiveTab {
     ArtInfo,
 }
 #[component]
-pub fn NewArtworkPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
+pub fn CreateArtworkPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
     let ctrl = Controller::new(lang, agit_id)?;
     let mut active_tab = use_signal(|| ActiveTab::ItemDetails);
-    let _tr: NewArtworkPageTranslate = translate(&lang);
+    let _tr: CreateArtworkPageTranslate = translate(&lang);
 
     rsx! {
         div { class: "w-full min-h-screen bg-background h-full flex text-white items-center",
