@@ -1,3 +1,2 @@
-mod artwork_table;
-
-pub use artwork_table::ArtworkTable;
+mod header;
+pub use header::Header;

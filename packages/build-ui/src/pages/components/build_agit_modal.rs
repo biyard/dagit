@@ -64,11 +64,11 @@ pub fn BuildAgitModal(on_button_click: EventHandler<BuildAgitResult>, lang: Lang
                 //     },
                 // }
                 SecondaryButton {
-                    label: tr.build_your_agit,
                     disabled,
                     onclick: move |_| {
                         on_button_click(BuildAgitResult { name: name() });
                     },
+                    {tr.build_your_agit}
                 }
             }
         }

@@ -1,4 +1,4 @@
-use bdk::prelude::by_components::icons::{arrows, other_devices, settings};
+use bdk::prelude::by_components::icons::{arrows, other_devices};
 use bdk::prelude::*;
 
 use crate::components::button::{ButtonWithIcon, IconButton};
@@ -134,12 +134,7 @@ pub fn EditArtistPage(
                         h1 { class: "text-2xl font-bold", "{tr.edit} {artist_id}'s {tr.info}" }
 
                         div { class: "relative",
-                            IconButton {
-                                onclick: move |_| is_dropdown_open.toggle(),
-                                icon: rsx! {
-                                    settings::Settings2 { class: "ml-2 [&>path]:stroke-white", height: 20, width: 20 }
-                                },
-                            }
+                            IconButton { onclick: move |_| is_dropdown_open.toggle() }
                             div {
                                 class: "absolute right-0 mt-2 w-48 bg-background border border-border-primary rounded-md shadow-lg z-1 hidden aria-dropdown-open:block",
                                 "aria-dropdown-open": is_dropdown_open,

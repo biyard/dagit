@@ -8,7 +8,7 @@ use by_components::icons::{arrows, validations};
 pub fn ArtworkTable(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
     let tr: ArtworkTranslate = translate(&lang);
     let ctrl = Controller::new(lang, agit_id)?;
-    let artworks = ctrl.artworks();
+    // let artworks = ctrl.artworks();
     rsx! {
         table { class: "w-full text-sm text-left border-collapse min-w-[800px]",
             // Table header

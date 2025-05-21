@@ -3,16 +3,11 @@ use bdk::prelude::*;
 #[component]
 pub fn SecondaryButton(
     #[props(default = "".to_string())] class: String,
-    label: String,
+    children: Element,
     #[props(default = false)] disabled: bool,
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
-    tracing::debug!(
-        "SecondaryButton: class: {}, label: {}, disabled: {}",
-        class,
-        label,
-        disabled
-    );
+    tracing::debug!("SecondaryButton: class: {}, disabled: {}", class, disabled);
     rsx! {
         button {
             class: format!(
@@ -25,7 +20,7 @@ pub fn SecondaryButton(
                 }
             },
             disabled,
-            {label}
+            {children}
         }
     }
 }
@@ -33,7 +28,7 @@ pub fn SecondaryButton(
 #[component]
 pub fn PrimaryButton(
     #[props(default = "".to_string())] class: String,
-    label: String,
+    children: Element,
     #[props(default = true)] disabled: bool,
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
@@ -50,24 +45,26 @@ pub fn PrimaryButton(
                     }
                 },
                 disabled,
-                {label}
+                {children}
             }
         }
     }
 }
 
+// TODO: REMOVE THIS COMPONENT
 #[component]
 pub fn ButtonWithIcon(
-    #[props(default = "".to_string())] class: String,
+    #[props(default = String::default())] class: String,
     label: String,
     icon: Element,
-    #[props(default = true)] disabled: bool,
+    #[props(default = false)] disabled: bool,
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
     rsx! {
         button {
             class: format!(
-                "border border-white text-white px-6 py-2 flex items-center justify-center bg-black active:bg-primary/25 active:border-primary hover:bg-primary/25 hover:border-primary disabled:border-neutral-80 disabled:text-neutral-80 disabled:bg-btn-disable{}",
+                "border border-white text-white px-4.5 py-3 flex items-center justify-center bg-black active:bg-primary/25 active:border-primary hover:bg-primary/25 hover:border-primary
+                                                                                                            disabled:border-neutral-80 disabled:text-neutral-80 disabled:bg-btn-disable {}",
                 class,
             ),
             onclick: move |e| {
@@ -84,17 +81,21 @@ pub fn ButtonWithIcon(
 
 #[component]
 pub fn IconButton(
-    #[props(default = "".to_string())] class: String,
-    icon: Element,
+    children: Element,
     onclick: EventHandler<MouseEvent>,
-    #[props(extends = GlobalAttributes)] attributes: Vec<Attribute>,
+    #[props(default = false)] disabled: bool,
+    // #[props(extends = GlobalAttributes)] attributes: Vec<Attribute>,
 ) -> Element {
     rsx! {
         button {
+            class: "group border border-neutral-80 hover:border-black hover:bg-white p-2.5 ",
             onclick: move |e| {
                 onclick.call(e);
             },
-            {icon}
+            div { class: "size-6 [&>svg>path]:stroke-white group-hover:[&>svg>path]:stroke-black",
+                {children}
+            }
+        
         }
     }
 }

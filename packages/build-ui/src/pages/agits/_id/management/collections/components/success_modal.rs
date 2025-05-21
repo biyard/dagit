@@ -22,10 +22,10 @@ pub fn SuccessModal(
             // Modal footer
             div { class: "flex  items-center  pt-4 border-border-primary",
                 SecondaryButton {
-                    label: tr.confirm_btn_text,
                     onclick: move |_| on_confirm.call(()),
                     disabled: false,
                     class: "flex-1 px-6 py-2 bg-white text-sm text-black hover:bg-gray-200 min-w[120px]",
+                    {tr.confirm_btn_text}
                 }
             }
         }

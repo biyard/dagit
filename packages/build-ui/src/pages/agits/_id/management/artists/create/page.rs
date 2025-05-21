@@ -1,11 +1,11 @@
 use bdk::prelude::{
-    by_components::icons::{arrows, other_devices, settings, validations},
+    by_components::icons::{arrows, other_devices, validations},
     *,
 };
 
 use crate::{
     components::{
-        button::{ButtonWithIcon, IconButton},
+        button::ButtonWithIcon,
         image_upload::FileUpload,
         input::{Input2, TextArea},
     },
@@ -19,7 +19,7 @@ pub fn CreateArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element
     let tr: CreateArtworkPageTranslate = translate(&lang);
     let mut ctrl = Controller::new(lang, agit_id)?;
     let _profile_picture = use_signal(|| None::<String>);
-    let mut is_dropdown_open = use_signal(|| false);
+    let is_dropdown_open = use_signal(|| false);
     // Handle form submission
     let handle_save = move |_| {
         // todo: similate api this
@@ -50,12 +50,12 @@ pub fn CreateArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element
                         h1 { class: "text-2xl font-bold", {tr.title} }
 
                         div { class: "relative",
-                            IconButton {
-                                onclick: move |_| is_dropdown_open.toggle(),
-                                icon: rsx! {
-                                    settings::Settings2 { class: "ml-2 [&>path]:stroke-white", height: 20, width: 20 }
-                                },
-                            }
+                            // IconButton {
+                            //     onclick: move |_| is_dropdown_open.toggle(),
+                            //     icon: rsx! {
+                            //         settings::Settings2 { class: "ml-2 [&>path]:stroke-white", height: 20, width: 20 }
+                            //     },
+                            // }
                             div {
                                 class: "absolute right-0 mt-2 w-48 bg-background border border-border-primary rounded-md shadow-lg z-1 hidden aria-dropdown-open:block",
                                 "aria-dropdown-open": is_dropdown_open,
