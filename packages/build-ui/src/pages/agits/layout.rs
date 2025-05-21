@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
-use crate::{pages::layout::SuspenseWrapper, routes::Route, services::user_service::UserService};
-use bdk::prelude::*;
+use crate::{routes::Route, services::user_service::UserService};
+use bdk::prelude::{by_components::loaders::cube_loader::CubeLoader, *};
 
 use super::Navigation;
 
@@ -15,9 +15,14 @@ pub fn NavigationLayout(lang: Language, agit_id: i64) -> Element {
     });
 
     rsx! {
-        SuspenseWrapper {
-            div { class: "flex flex-row bg-background min-h-svh",
-                Navigation { lang, agit_id }
+        div { class: "flex flex-row bg-background min-h-svh",
+            Navigation { lang, agit_id }
+            SuspenseBoundary {
+                fallback: |_| {
+                    rsx! {
+                        div { class: "w-full h-screen flex justify-center items-center", CubeLoader {} }
+                    }
+                },
                 div { class: "py-10 px-20 w-full", Outlet::<Route> {} }
             }
         }
