@@ -83,11 +83,10 @@ impl ArtworkController {
             ArtworkByIdAction::Update(_) => {
                 //TODO: Add Update Artwork
                 Ok(Json(Artwork::default()))
-            }
-            ArtworkByIdAction::Delete(_) => {
-                //TODO: Add Delete Artwork
-                Ok(Json(Artwork::default()))
-            }
+            } // ArtworkByIdAction::Delete(_) => {
+              //     //TODO: Add Delete Artwork
+              //     Ok(Json(Artwork::default()))
+              // }
         }
     }
 }

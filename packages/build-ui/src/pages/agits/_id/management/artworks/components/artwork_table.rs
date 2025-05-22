@@ -10,7 +10,7 @@ pub fn ArtworkTable(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
     let ctrl = Controller::new(lang, agit_id)?;
     // let artworks = ctrl.artworks();
     rsx! {
-        table { class: "w-full text-sm text-left border-collapse min-w-[800px]",
+        table { class: "w-full text-sm text-left table-auto",
             // Table header
             thead { class: "text-xs uppercase bg-table-background border-b border-border-primary",
                 tr {
