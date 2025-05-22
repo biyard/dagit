@@ -1,7 +1,9 @@
 use bdk::prelude::{by_types::QueryResponse, *};
 use common::tables::prelude::{Artwork, ArtworkQuery, ArtworkSummary};
 
-use crate::components::table::{SortConfig, SortDirection};
+use crate::components::table::{SortConfig, SortDirection, TableHeaderCellProps};
+
+use super::i18n::ArtworkTranslate;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ViewMode {
@@ -28,11 +30,14 @@ impl From<&str> for Filter {
     }
 }
 #[allow(unused)]
-#[derive(Debug, Clone, Copy, DioxusController)]
+#[derive(Clone, Copy, DioxusController)]
 pub struct Controller {
     lang: Language,
     agit_id: ReadOnlySignal<i64>,
     view_mode: Signal<ViewMode>,
+
+    columns: Signal<Vec<TableHeaderCellProps>>,
+
     filter: Signal<Filter>,
     show_side_bar: Signal<bool>,
 
@@ -43,6 +48,7 @@ pub struct Controller {
 
 impl Controller {
     pub fn new(lang: Language, agit_id: ReadOnlySignal<i64>) -> Result<Self, RenderError> {
+        let tr: ArtworkTranslate = translate(&lang);
         let artworks: Resource<QueryResponse<ArtworkSummary>> =
             use_server_future(move || async move {
                 let endpoint = crate::config::get().api_url;
@@ -55,12 +61,67 @@ impl Controller {
 
         let ctrl: Controller = Self {
             lang,
+
             agit_id,
             view_mode: use_signal(|| ViewMode::Table),
             filter: use_signal(|| Filter::All),
             show_side_bar: use_signal(|| false),
 
             sort_config: use_signal(|| None),
+            columns: use_signal(|| {
+                vec![
+                    TableHeaderCellProps {
+                        label: tr.title.to_string(),
+                        width: "100px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.attributes.to_string(),
+                        width: "110px".to_string(),
+                        sortable: false,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.ways_to_sell.to_string(),
+                        width: "150px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.owner.to_string(),
+                        width: "100px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.current_price.to_string(),
+                        width: "150px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.average_price.to_string(),
+                        width: "150px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.price_change.to_string(),
+                        width: "150px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.volume.to_string(),
+                        width: "150px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.royalty.to_string(),
+                        width: "100px".to_string(),
+                        sortable: true,
+                    },
+                    TableHeaderCellProps {
+                        label: tr.status.to_string(),
+                        width: "100px".to_string(),
+                        sortable: true,
+                    },
+                ]
+            }),
             artworks,
         };
 

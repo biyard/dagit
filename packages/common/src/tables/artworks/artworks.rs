@@ -34,53 +34,54 @@ pub struct Artwork {
     #[api_model(auto = [insert, update])]
     pub updated_at: i64,
 
-    #[api_model(action = create)]
+    #[api_model(summary, action = create)]
     pub title: String,
 
     // Sale Info
-    #[api_model(action = create)]
+    #[api_model(summary, action = create)]
     pub ways_to_sell: WaysToSell,
 
-    #[api_model(action = create, nullable)]
+    #[api_model(summary, action = create, nullable)]
     pub rarity: Option<Rarity>,
-    #[api_model(action = create)]
+    #[api_model(summary, action = create)]
     pub stock: Option<i64>,
 
-    #[api_model(action = create, action_by_id = update, nullable)]
+    #[api_model(summary, action = create, action_by_id = update, nullable)]
     pub lockup_started_at: Option<i64>,
-    #[api_model(action = create, action_by_id = update, nullable)]
+    #[api_model(summary, action = create, action_by_id = update, nullable)]
     pub lockup_ended_at: Option<i64>,
 
     // Attributes
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub medium: Vec<Medium>,
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub theme: Vec<Theme>,
 
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub art_style: Vec<ArtStyle>,
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub material: Vec<Material>,
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub color: Vec<String>,
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub size: Size,
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub weight: Weight,
-    #[api_model(action = create, type = JSONB)]
+    #[api_model(summary, action = create, type = JSONB)]
     pub year: i64,
 
-    #[api_model(skip, type = JSONB)]
+    #[api_model(summary, skip, type = JSONB)]
+    #[serde(default)]
     owner: ArtworkOwnership,
 
-    #[api_model(skip, type = JSONB)]
+    #[api_model(summary, skip, type = JSONB)]
     pub price_last: ArtworkPrice,
-    #[api_model(skip, type = JSONB)]
+    #[api_model(summary, skip, type = JSONB)]
     pub price_avg: ArtworkPrice,
     // Price change
-    #[api_model(skip, type = JSONB)]
+    #[api_model(summary, skip, type = JSONB)]
     pub price_change_24h: ArtworkPrice,
-    #[api_model(skip, type = JSONB)]
+    #[api_model(summary, skip, type = JSONB)]
     pub price_change_7d: ArtworkPrice,
 
     // Art Info
@@ -90,7 +91,7 @@ pub struct Artwork {
     #[api_model(action = create, nullable)]
     pub description: Option<String>,
 
-    #[api_model(action_by_id = update)]
+    #[api_model(summary, action_by_id = update)]
     pub certified_at: Option<i64>,
 
     #[api_model(many_to_one = agits)]
