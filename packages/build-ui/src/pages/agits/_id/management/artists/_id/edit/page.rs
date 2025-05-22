@@ -1,114 +1,21 @@
-// use bdk::prelude::by_components::icons::{arrows, other_devices};
 use bdk::prelude::*;
 
-// use crate::components::button::{ButtonWithIcon, IconButton};
-// use crate::components::image_upload::FileUpload;
-// use crate::components::input::{Input2, TextArea};
-// use crate::components::search_filter_bar::SearchFilterBar;
-// use crate::pages::agits::_id::management::artists::_id::i18n::EditArtistPageTranslate;
-// use crate::pages::agits::_id::management::artists::components::SingleArtistTable;
-// use crate::pages::agits::_id::management::artists::controller::Controller;
-// use crate::pages::agits::_id::management::artists::i18n::ArtistTranslate;
-// use crate::pages::agits::_id::management::components::NftTable;
-// use crate::routes::Route;
 #[component]
-#[allow(unused_variables)]
-pub fn ArtistDetailPage(lang: Language, agit_id: ReadOnlySignal<i64>, artist_id: i64) -> Element {
-    // let tr: ArtistTranslate = translate(&lang);
-    // let mut view_mode = use_signal(|| "table");
-    // let ctrl = Controller::new(lang, agit_id)?;
-    // let artist_assets = ctrl.artworks();
+pub fn EditArtistPage(
+    lang: Language,
+    agit_id: ReadOnlySignal<i64>,
+    artist_id: ReadOnlySignal<i64>,
+) -> Element {
+    // let tr: EditArtistPageTranslate = translate(&lang);
+    // let mut ctrl = Controller::new(lang, agit_id)?;
+    // let _profile_picture = use_signal(|| None::<String>);
+    // let mut is_dropdown_open = use_signal(|| false);
+
+    // // Handle form submission
+    // let handle_save = move |_| {
+    //     // todo: similate api this
+    // };
     rsx! {}
-    //     rsx! {
-    //         div { class: "w-full min-h-screen bg-background h-full flex text-white justify-center items-center",
-    //             div { class: "flex flex-col w-full h-full text-white",
-
-    //                 // Header with back button and collector info
-    //                 div { class: "flex flex-col mb-6",
-    //                     div { class: "flex items-center",
-    //                         div { onclick: move |_| ctrl.go_back(),
-    //                             svg {
-    //                                 xmlns: "http://www.w3.org/2000/svg",
-    //                                 class: "h-6 w-6",
-    //                                 fill: "none",
-    //                                 view_box: "0 0 24 24",
-    //                                 stroke: "currentColor",
-    //                                 path {
-    //                                     stroke_linecap: "round",
-    //                                     stroke_linejoin: "round",
-    //                                     stroke_width: "2",
-    //                                     d: "M15 19l-7-7 7-7",
-    //                                 }
-    //                             }
-    //                         }
-
-    //                         div { class: "flex items-center",
-
-    //                             h1 { class: "text-xl font-bold", {format!("{{Artist {}}}", artist_id)} }
-    //                         }
-    //                     }
-    //                     div { class: "text-sm text-gray-400 m-2", "52 Total Artworks" }
-    //                 }
-
-    //                 // Search and view controls
-
-    //                 SearchFilterBar {
-    //                     placeholder: tr.search_by_title,
-    //                     show_filter_btn: true,
-    //                     on_filter_click: move |_| {},
-    //                     on_search_change: move |search_text| {},
-    //                     on_search: move |search_text| {},
-    //                     show_all_filter_field: true,
-    //                     show_art_btn: true,
-    //                     on_view_mode_click: move |_| {
-    //                         view_mode.set(if *view_mode.read() == "table" { "nftImages" } else { "table" });
-    //                     },
-    //                     show_add_btn: true,
-    //                     add_btn_text: tr.new_artist,
-    //                     on_add_click: move |_| ctrl.open_new_artist_form(),
-    //                     remove_btn_text: tr.remove_artist,
-    //                 }
-
-    //                 // Assets table
-    //                 div { class: "overflow-x-auto flex-1",
-    //                     {
-    //                         if *view_mode.read() == "nftImages" {
-    //                             rsx! {
-    //                                 NftTable { artworks: artist_assets.clone(), lang }
-    //                             }
-    //                         } else {
-    //                             rsx! {
-    //                                 SingleArtistTable {
-    //                                     assets: artist_assets.clone(),
-    //                                     lang,
-    //                                     agit_id: agit_id(),
-    //                                     artist_id,
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
-    // #[component]
-    // pub fn EditArtistPage(
-    //     lang: Language,
-    //     agit_id: ReadOnlySignal<i64>,
-    //     artist_id: ReadOnlySignal<i64>,
-    // ) -> Element {
-    //     let tr: EditArtistPageTranslate = translate(&lang);
-    //     let mut ctrl = Controller::new(lang, agit_id)?;
-    //     let _profile_picture = use_signal(|| None::<String>);
-    //     let mut is_dropdown_open = use_signal(|| false);
-
-    //     // Handle form submission
-    //     let handle_save = move |_| {
-    //         // todo: similate api this
-    //     };
-
     //     rsx! {
     //         div { class: "w-full min-h-screen bg-background h-full flex text-white items-center",
     //             div { class: "flex flex-col w-full h-full p-6",

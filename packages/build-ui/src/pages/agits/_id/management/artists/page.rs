@@ -1,20 +1,21 @@
-use crate::components::search_filter_bar::SearchFilterBar;
-use crate::routes::Route;
-use bdk::prelude::by_components::icons::{arrows, validations};
+// use crate::components::search_filter_bar::SearchFilterBar;
+// use crate::routes::Route;
+// use bdk::prelude::by_components::icons::{arrows, validations};
 use bdk::prelude::*;
 
-use super::i18n::ArtistTranslate;
+// use super::i18n::ArtistTranslate;
 
-use super::controller::Controller;
+// use super::controller::Controller;
 #[component]
 #[allow(unused_variables)]
 pub fn ArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
-    let ctrl = Controller::new(lang, agit_id)?;
-    let tr: ArtistTranslate = translate(&lang);
-    let view_mode = use_signal(|| "table");
-    let search_query = use_signal(String::new);
-    let artists = ctrl.artist();
-    rsx! {
+    // let ctrl = Controller::new(lang, agit_id)?;
+    // let tr: ArtistTranslate = translate(&lang);
+    // let view_mode = use_signal(|| "table");
+    // let search_query = use_signal(String::new);
+    // let artists = ctrl.artist();
+    rsx! {}
+    /* rsx! {
         div { class: "w-full min-h-screen bg-background h-full flex text-white justify-center items-center",
             div { class: "flex flex-col w-full h-full",
                 div { class: "flex flex-col mb-6",
@@ -188,4 +189,5 @@ pub fn ArtistPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
             }
         }
     }
+    */
 }

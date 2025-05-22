@@ -1,17 +1,17 @@
 use bdk::prelude::*;
 
-use crate::components::search_filter_bar::SearchFilterBar;
-use crate::components::tab_button::TabButton;
-use crate::pages::agits::_id::management::collections::controller::Controller;
-use crate::pages::agits::_id::management::collections::i18n::CollectionTranslate;
+// use crate::components::search_filter_bar::SearchFilterBar;
+// use crate::components::tab_button::TabButton;
+// use crate::pages::agits::_id::management::collections::controller::Controller;
+// use crate::pages::agits::_id::management::collections::i18n::CollectionTranslate;
 
-use crate::pages::agits::_id::management::components::{ActivityTable, NftTable, OwnedTable};
-use crate::routes::Route;
-#[derive(Clone, Debug, PartialEq)]
-pub enum AssetTab {
-    List,
-    Activity,
-}
+// use crate::pages::agits::_id::management::components::{ActivityTable, NftTable, OwnedTable};
+// use crate::routes::Route;
+// #[derive(Clone, Debug, PartialEq)]
+// pub enum AssetTab {
+//     List,
+//     Activity,
+// }
 
 #[component]
 #[allow(unused_variables)]
@@ -20,14 +20,14 @@ pub fn CollectionDetailPage(
     agit_id: ReadOnlySignal<i64>,
     collection_id: i64,
 ) -> Element {
-    let search_query = use_signal(String::new);
-    let mut active_tab = use_signal(|| AssetTab::List);
-    let mut view_mode = use_signal(|| "table");
-    let tr: CollectionTranslate = translate(&lang);
-    let ctrl = Controller::new(lang, agit_id)?;
-    let artworks = ctrl.artworks();
-
-    rsx! {
+    // let search_query = use_signal(String::new);
+    // let mut active_tab = use_signal(|| AssetTab::List);
+    // let mut view_mode = use_signal(|| "table");
+    // let tr: CollectionTranslate = translate(&lang);
+    // let ctrl = Controller::new(lang, agit_id)?;
+    // let artworks = ctrl.artworks();
+    rsx! {}
+    /* rsx! {
         div { class: "w-full min-h-screen bg-background h-full flex text-white justify-center items-center",
 
             div { class: "flex flex-col w-full h-full text-white",
@@ -143,5 +143,5 @@ pub fn CollectionDetailPage(
                 }
             }
         }
-    }
+    }*/
 }
