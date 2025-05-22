@@ -18,6 +18,8 @@ use common::{
     },
 };
 use sqlx::postgres::PgRow;
+
+use super::artwork::ArtworkController;
 #[cfg(test)]
 mod tests;
 
@@ -42,11 +44,18 @@ impl AgitController {
     }
 
     pub fn route(pool: sqlx::PgPool) -> Result<by_axum::axum::Router> {
-        let ctrl = Self::new(pool);
+        let ctrl = Self::new(pool.clone());
         Ok(by_axum::axum::Router::new()
-            .route("/:id", get(Self::get_agit_by_id).post(Self::act_agit_by_id))
             .route("/", post(Self::act_agit).get(Self::get_agit))
-            .with_state(ctrl))
+            .route(
+                "/:agit_id",
+                get(Self::get_agit_by_id).post(Self::act_agit_by_id),
+            )
+            .with_state(ctrl)
+            .nest(
+                "/:agit_id/artworks",
+                ArtworkController::route(pool.clone())?,
+            ))
     }
 
     pub async fn act_agit(

@@ -48,7 +48,7 @@ impl Controller {
                 let endpoint = crate::config::get().api_url;
                 let client = Artwork::get_client(endpoint);
                 client
-                    .query(ArtworkQuery::new(100).with_page(1))
+                    .query(agit_id(), ArtworkQuery::new(100).with_page(1))
                     .await
                     .unwrap_or_default()
             })?;

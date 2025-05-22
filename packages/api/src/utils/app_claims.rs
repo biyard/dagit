@@ -13,8 +13,7 @@ impl<'a> AppClaims<'a> {
 
     pub fn generate_token(user: &User) -> Result<String> {
         let mut claims = Claims {
-            sub: user.address.to_string(),
-            exp: user.id as u64,
+            sub: user.id.to_string(),
             role: by_types::Role::User,
             custom: HashMap::from([("email".to_string(), user.email.clone())]),
             ..Claims::default()
@@ -26,7 +25,7 @@ impl<'a> AppClaims<'a> {
         })
     }
 
-    pub fn get_address(&self) -> String {
+    pub fn get_id(&self) -> i64 {
         self.0.sub.parse().unwrap_or_default()
     }
 }

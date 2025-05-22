@@ -81,12 +81,12 @@ impl UserController {
 
 impl UserController {
     async fn refresh_user(&self, auth: Authorization) -> Result<JsonWithHeaders<User>> {
-        let user_address = match auth {
-            Authorization::Bearer { ref claims } => AppClaims(claims).get_address(),
+        let user_id = match auth {
+            Authorization::Bearer { ref claims } => AppClaims(claims).get_id(),
             _ => return Err(ServiceError::Unauthorized),
         };
         let user = User::query_builder()
-            .address_equals(user_address)
+            .id_equals(user_id)
             .query()
             .map(|r: PgRow| r.into())
             .fetch_one(&self.pool)
