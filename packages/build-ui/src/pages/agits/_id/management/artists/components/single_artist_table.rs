@@ -1,4 +1,4 @@
-use crate::pages::agits::_id::management::artists::controllers::Controller;
+use crate::pages::agits::_id::management::artists::controller::Controller;
 use crate::pages::agits::_id::management::artists::i18n::ArtistTranslate;
 use bdk::prelude::by_components::icons::arrows;
 use bdk::prelude::{by_components::icons::validations, *};

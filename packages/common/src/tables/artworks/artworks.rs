@@ -1,87 +1,111 @@
 use bdk::prelude::*;
+
+use by_types::QueryResponse;
 use validator::Validate;
 
-//TODO(api): Implement "/likes" and "/prices" API
-//TODO(api): Implement admin api "m1/agit/:id" for manging admins.
-//TODO(api): Implement Watermarking API
+use crate::tables::prelude::{ArtworkOwnership, ArtworkPrice};
+
+use super::{ArtStyle, Material, Medium, Rarity, Size, Theme, WaysToSell, Weight};
+#[derive(
+    Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, dioxus_translate::Translate, Copy,
+)]
+#[cfg_attr(feature = "server", derive(schemars::JsonSchema, aide::OperationIo))]
+pub enum Sorter {
+    #[default]
+    Title = 1,
+}
+
+#[derive(
+    Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, dioxus_translate::Translate, Copy,
+)]
+#[cfg_attr(feature = "server", derive(schemars::JsonSchema, aide::OperationIo))]
+pub enum Order {
+    #[default]
+    Asc = 1,
+    Desc = 2,
+}
 #[derive(Validate)]
-#[api_model(base = "/v1/artworks", table = artworks, action_by_id = [delete], iter_type = by_types::QueryResponse)]
+#[api_model(base = "/v1/agits/:agit_id/artworks", table = artworks, iter_type = QueryResponse, queryable = [(sort = Sorter, order = Order)])]
 pub struct Artwork {
     #[api_model(summary, primary_key)]
     pub id: i64,
-    #[api_model(summary, auto = [insert])]
+    #[api_model(auto = [insert])]
     pub created_at: i64,
-    #[api_model(summary, auto = [insert, update])]
+    #[api_model(auto = [insert, update])]
     pub updated_at: i64,
 
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub name: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub description: String,
-    #[api_model(summary, action = create, action_by_id = update)]
+    #[api_model(summary, action = create)]
     pub title: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub verified: bool,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub collection_type: Option<String>,
-    #[api_model(summary, action = create, action_by_id = update, type=JSONB)]
-    pub attributes_type: Vec<String>,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub ways_to_sell: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub volume_eth: f64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub volume_usd: f64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub status: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub current_price: f64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub average_price: f64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub royalty: f64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub price_change: f64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub owners: i64,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub art_image: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub medium: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub rarity: String,
 
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub activity_id: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub activity_from: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub activity_to: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub activity_time: String,
-    #[api_model(summary, action = create, action_by_id = update)]
-    pub activity_title: String,
+    // Sale Info
+    #[api_model(summary, action = create)]
+    pub ways_to_sell: WaysToSell,
+
+    #[api_model(summary, action = create, nullable)]
+    pub rarity: Option<Rarity>,
+    #[api_model(summary, action = create)]
+    pub stock: Option<i64>,
 
     #[api_model(summary, action = create, action_by_id = update, nullable)]
-    pub external_link: Option<String>,
+    pub lockup_started_at: Option<i64>,
+    #[api_model(summary, action = create, action_by_id = update, nullable)]
+    pub lockup_ended_at: Option<i64>,
 
-    #[api_model(summary, many_to_one = agits)]
+    // Attributes
+    #[api_model(summary, action = create, type = JSONB)]
+    pub medium: Vec<Medium>,
+    #[api_model(summary, action = create, type = JSONB)]
+    pub theme: Vec<Theme>,
+
+    #[api_model(summary, action = create, type = JSONB)]
+    pub art_style: Vec<ArtStyle>,
+    #[api_model(summary, action = create, type = JSONB)]
+    pub material: Vec<Material>,
+    #[api_model(summary, action = create, type = JSONB)]
+    pub color: Vec<String>,
+    #[api_model(summary, action = create, type = JSONB)]
+    pub size: Size,
+    #[api_model(summary, action = create, type = JSONB)]
+    pub weight: Weight,
+    #[api_model(summary, action = create, type = JSONB)]
+    pub year: i64,
+
+    #[api_model(summary, skip, type = JSONB)]
+    #[serde(default)]
+    owner: ArtworkOwnership,
+
+    #[api_model(summary, skip, type = JSONB)]
+    pub price_last: ArtworkPrice,
+    #[api_model(summary, skip, type = JSONB)]
+    pub price_avg: ArtworkPrice,
+    // Price change
+    #[api_model(summary, skip, type = JSONB)]
+    pub price_change_24h: ArtworkPrice,
+    #[api_model(summary, skip, type = JSONB)]
+    pub price_change_7d: ArtworkPrice,
+
+    // Art Info
+    #[api_model(action = create, type = JSONB)]
+    pub image_urls: Vec<String>,
+
+    #[api_model(action = create, nullable)]
+    pub description: Option<String>,
+
+    #[api_model(summary, action_by_id = update)]
+    pub certified_at: Option<i64>,
+
+    #[api_model(many_to_one = agits)]
     pub agit_id: i64,
 
-    #[api_model(summary, many_to_one = collections, nullable)]
-    pub collection_id: Option<i64>,
+    // Note: if collection_id is 0, it means the artwork is not in any collection
+    #[api_model()]
+    pub collection_id: i64,
 
-    #[api_model(summary, many_to_one = artists)]
+    #[api_model(many_to_one = artists)]
     pub artist_id: i64,
 
-    #[api_model(summary, many_to_one = users)]
-    pub owner_id: i64,
-
-    #[api_model(summary, one_to_many = artwork_user_likes, foreign_key = artwork_id, aggregator = count)]
+    #[api_model(one_to_many = artwork_user_likes, foreign_key = artwork_id, aggregator = count)]
     pub likes: i64,
-    #[api_model(summary, many_to_many = artwork_user_likes, table_name = users, foreign_primary_key = user_id, foreign_reference_key = artwork_id, aggregator = exist)]
+    #[api_model(many_to_many = artwork_user_likes, table_name = users, foreign_primary_key = user_id, foreign_reference_key = artwork_id, aggregator = exist)]
     pub liked: bool,
-
-    #[api_model(summary, one_to_many = artwork_prices, foreign_key = artwork_id, aggregator = max(created_at))]
-    pub last_price: i64,
 }

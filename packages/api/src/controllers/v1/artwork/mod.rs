@@ -1,5 +1,5 @@
 #![allow(unused)]
-use bdk::prelude::*;
+use bdk::prelude::{by_types::QueryResponse, *};
 use by_axum::{
     aide,
     auth::Authorization,
@@ -11,11 +11,23 @@ use by_axum::{
 };
 use common::Result;
 use common::tables::prelude::*;
+use sqlx::Row;
+use sqlx::postgres::PgRow;
+
+use crate::utils::app_claims::AppClaims;
 
 #[derive(
     Debug, Clone, serde::Deserialize, serde::Serialize, schemars::JsonSchema, aide::OperationIo,
 )]
-pub struct ArtworkPathParam {
+pub struct ArtworkPath {
+    agit_id: i64,
+}
+
+#[derive(
+    Debug, Clone, serde::Deserialize, serde::Serialize, schemars::JsonSchema, aide::OperationIo,
+)]
+pub struct ArtworkByIdPath {
+    agit_id: i64,
     id: i64,
 }
 
@@ -42,28 +54,34 @@ impl ArtworkController {
 
 impl ArtworkController {
     pub async fn list(
-        State(_ctrl): State<ArtworkController>,
-        Extension(_claim): Extension<Option<Authorization>>,
-        Query(q): Query<ArtworkParam>,
-    ) -> Result<Json<Vec<ArtworkSummary>>> {
-        //TODO: Add Listing Artworks
-        tracing::debug!("list artworks");
-        Ok(Json(vec![]))
+        State(ctrl): State<ArtworkController>,
+        Extension(claim): Extension<Option<Authorization>>,
+        Path(ArtworkPath { agit_id }): Path<ArtworkPath>,
+        Query(param): Query<ArtworkParam>,
+    ) -> Result<Json<ArtworkGetResponse>> {
+        let user_id = match claim {
+            Some(Authorization::Bearer { ref claims }) => AppClaims(claims).get_id(),
+            _ => 0,
+        };
+        match param {
+            ArtworkParam::Query(q) => Ok(Json(ArtworkGetResponse::Query(
+                ctrl.query(user_id, agit_id, q).await?,
+            ))),
+        }
     }
     pub async fn get(
-        State(_ctrl): State<ArtworkController>,
-        Extension(_claim): Extension<Option<Authorization>>,
-        Path(ArtworkPathParam { id }): Path<ArtworkPathParam>,
+        State(ctrl): State<ArtworkController>,
+        Extension(claim): Extension<Option<Authorization>>,
+        Path(ArtworkByIdPath { agit_id, id }): Path<ArtworkByIdPath>,
     ) -> Result<Json<Artwork>> {
-        tracing::debug!("get artwork {id}");
         Ok(Json(Artwork::default()))
     }
     pub async fn act(
-        State(_ctrl): State<ArtworkController>,
-        Extension(_claim): Extension<Option<Authorization>>,
+        State(ctrl): State<ArtworkController>,
+        Extension(claim): Extension<Option<Authorization>>,
+        Path(ArtworkPath { agit_id }): Path<ArtworkPath>,
         Json(body): Json<ArtworkAction>,
     ) -> Result<Json<Artwork>> {
-        tracing::debug!("artwork act {body:?}");
         match body {
             ArtworkAction::Create(req) => {
                 //TODO: Add Create Artwork
@@ -71,11 +89,10 @@ impl ArtworkController {
             }
         }
     }
-
     pub async fn act_by_id(
-        State(_ctrl): State<ArtworkController>,
-        Path(ArtworkPathParam { id }): Path<ArtworkPathParam>,
-        Extension(_claim): Extension<Option<Authorization>>,
+        State(ctrl): State<ArtworkController>,
+        Path(ArtworkByIdPath { agit_id, id }): Path<ArtworkByIdPath>,
+        Extension(claim): Extension<Option<Authorization>>,
         Json(body): Json<ArtworkByIdAction>,
     ) -> Result<Json<Artwork>> {
         tracing::debug!("artwork act_by_id {id} {body:?}");
@@ -84,10 +101,32 @@ impl ArtworkController {
                 //TODO: Add Update Artwork
                 Ok(Json(Artwork::default()))
             }
-            ArtworkByIdAction::Delete(_) => {
-                //TODO: Add Delete Artwork
-                Ok(Json(Artwork::default()))
-            }
         }
+    }
+}
+
+impl ArtworkController {
+    async fn query(
+        &self,
+        user_id: i64,
+        agit_id: i64,
+        param: ArtworkQuery,
+    ) -> Result<QueryResponse<ArtworkSummary>> {
+        let total_count = sqlx::query("SELECT COUNT(*) FROM artworks WHERE agit_id = $1")
+            .bind(agit_id)
+            .map(|row: PgRow| row.get::<i64, _>(0))
+            .fetch_one(&self.pool)
+            .await?;
+
+        let items: Vec<ArtworkSummary> = Artwork::query_builder(user_id)
+            .limit(param.size())
+            .page(param.page())
+            .agit_id_equals(agit_id)
+            .query()
+            .map(|row: PgRow| row.into())
+            .fetch_all(&self.pool)
+            .await?;
+
+        Ok(QueryResponse { total_count, items })
     }
 }

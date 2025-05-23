@@ -5,13 +5,13 @@ use bdk::prelude::{
     *,
 };
 
-use super::controllers::Controller;
+use super::controller::Controller;
 use super::i18n::CollectorsTranslate;
 use crate::{
     pages::agits::_id::management::collectors::components::CollectorsTable, routes::Route,
 };
 #[component]
-pub fn CollectorsPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
+pub fn CollectorPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
     let ctrl = Controller::new(lang, agit_id)?;
     let tr: CollectorsTranslate = translate(&lang);
     let mut search_query = use_signal(String::new);

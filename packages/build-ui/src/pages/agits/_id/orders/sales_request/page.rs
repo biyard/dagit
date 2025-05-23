@@ -1,8 +1,10 @@
 use bdk::prelude::*;
 
+use crate::pages::agits::components::ComingSoon;
+
 #[component]
 pub fn SalesRequestPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
     rsx! {
-        div { class: "flex flex-col h-full text-white", "SalesRequestPage {agit_id}" }
+        ComingSoon {}
     }
 }

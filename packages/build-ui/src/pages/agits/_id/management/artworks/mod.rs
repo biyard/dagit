@@ -1,8 +1,9 @@
 mod components;
-pub mod controllers;
+mod controller;
 mod i18n;
-mod model;
-mod new;
 mod page;
-pub use new::NewArtworkPage;
+
 pub use page::ArtworkPage;
+
+mod create;
+pub use create::CreateArtworkPage;

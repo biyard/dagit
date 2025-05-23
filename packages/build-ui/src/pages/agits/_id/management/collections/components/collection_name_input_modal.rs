@@ -49,19 +49,19 @@ pub fn CollectionNameInputModal(
             // Modal footer
             div { class: "flex items-center justify-end gap-4 p-6 border-t border-border-primary",
                 PrimaryButton {
-                    label: tr.back_btn_text,
                     onclick: move |_| {
                         on_back.call(());
                     },
                     disabled: false,
+                    {tr.back_btn_text}
                 }
 
                 SecondaryButton {
-                    label: tr.add_btn_text,
                     onclick: move |_| {
                         on_add.call(collection_name.read().clone());
                     },
                     disabled: collection_name.read().is_empty(),
+                    {tr.add_btn_text}
                 }
             }
         }

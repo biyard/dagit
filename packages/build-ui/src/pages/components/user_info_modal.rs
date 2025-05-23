@@ -72,7 +72,6 @@ pub fn UserInfoModal(
                     },
                 }
                 SecondaryButton {
-                    label: tr.finish_signup,
                     disabled,
                     onclick: move |_| {
                         if nickname().is_empty() || email().is_empty() || agree_term().is_none() {
@@ -85,6 +84,7 @@ pub fn UserInfoModal(
                             ads_agreed_at: agree_receive_ads(),
                         });
                     },
+                    {tr.finish_signup}
                 }
             }
         }

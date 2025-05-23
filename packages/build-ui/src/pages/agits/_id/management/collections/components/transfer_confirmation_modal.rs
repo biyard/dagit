@@ -21,19 +21,19 @@ pub fn TransferConfirmationModal(
             // Modal footer
             div { class: "flex items-center justify-between gap-4 pt-6 pb-4 border-border-primary",
                 PrimaryButton {
-                    label: tr.back_btn_text,
                     onclick: move |_| {
                         on_back.call(());
                     },
                     disabled: false,
+                    {tr.back_btn_text}
                 }
                 SecondaryButton {
-                    label: tr.continue_btn_text,
                     onclick: move |_| {
                         on_continue.call(String::new());
                     },
                     disabled: false,
                     class: "text-black bg-white",
+                    {tr.continue_btn_text}
                 }
             }
                 // button {

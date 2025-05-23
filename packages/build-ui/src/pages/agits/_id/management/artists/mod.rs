@@ -1,11 +1,12 @@
-mod _id;
-mod components;
-mod controllers;
-mod i18n;
-mod models;
-mod new;
+// mod components;
+// mod controller;
+// mod i18n;
+// mod models;
 mod page;
 
+mod create;
+pub use create::CreateArtistPage;
+mod _id;
 pub use _id::{ArtistDetailPage, EditArtistPage};
-pub use new::NewArtistPage;
+
 pub use page::ArtistPage;

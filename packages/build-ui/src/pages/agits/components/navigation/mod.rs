@@ -1,6 +1,6 @@
 use crate::{components::ServiceLogo, routes::Route};
 use bdk::prelude::*;
-
+use by_components::icons::arrows::BendArrowRight;
 mod i18n;
 use i18n::NavigationTranslate;
 
@@ -19,15 +19,9 @@ enum SelectedItem {
     SalesRequest,
     ShippingLabel,
     Artworks,
-    NewArtworkPage,
     Collections,
-    CollectionDetail,
     Artist,
-    ArtistDetail,
-    NewArtistPage,
-    EditArtistPage,
     Collectors,
-    CollectorDetail,
     Dao,
     Oracle,
     Faq,
@@ -39,94 +33,35 @@ enum SelectedItem {
 }
 fn check_route(route: Route) -> (SelectedSection, SelectedItem) {
     match route {
-        Route::HomePage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::HomePage, SelectedItem::None),
+        Route::ArtworkPage { .. } | Route::CreateArtworkPage { .. } => {
+            (SelectedSection::Management, SelectedItem::Artworks)
+        }
+        Route::CollectionPage { .. } | Route::CollectionDetailPage { .. } => {
+            (SelectedSection::Management, SelectedItem::Collections)
+        }
+        Route::ArtistPage { .. }
+        | Route::ArtistDetailPage { .. }
+        | Route::EditArtistPage { .. }
+        | Route::CreateArtistPage { .. } => (SelectedSection::Management, SelectedItem::Artist),
 
-        Route::SalesRequestPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Orders, SelectedItem::SalesRequest),
-        Route::ShippingLabelPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Orders, SelectedItem::ShippingLabel),
-        Route::ArtworkPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Management, SelectedItem::Artworks),
-        Route::NewArtworkPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Management, SelectedItem::NewArtworkPage),
+        Route::CollectorPage { .. } | Route::CollectorDetailPage { .. } => {
+            (SelectedSection::Management, SelectedItem::Collectors)
+        }
+        Route::DaoPage { .. } => (SelectedSection::Hub, SelectedItem::Dao),
+        Route::OraclePage { .. } => (SelectedSection::Hub, SelectedItem::Oracle),
+        Route::FaqPage { .. } => (SelectedSection::Hub, SelectedItem::Faq),
+        Route::ReportPage { .. } => (SelectedSection::Analytics, SelectedItem::Report),
+        Route::TrafficPage { .. } => (SelectedSection::Analytics, SelectedItem::Traffic),
+        Route::DesignPage { .. } => (SelectedSection::Design, SelectedItem::Design),
+        Route::ExtensionToolPage { .. } => {
+            (SelectedSection::ExtensionTool, SelectedItem::ExtensionTool)
+        }
+        Route::HomePage { .. } => (SelectedSection::HomePage, SelectedItem::None),
 
-        Route::CollectionPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Management, SelectedItem::Collections),
-        Route::CollectionDetailPage {
-            lang: _,
-            agit_id: _,
-            collection_id: _,
-        } => (SelectedSection::Management, SelectedItem::CollectionDetail),
-        Route::ArtistPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Management, SelectedItem::Artist),
-        Route::NewArtistPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Management, SelectedItem::NewArtistPage),
-        Route::EditArtistPage {
-            lang: _,
-            agit_id: _,
-            artist_id: _,
-        } => (SelectedSection::Management, SelectedItem::EditArtistPage),
-        Route::ArtistDetailPage {
-            lang: _,
-            agit_id: _,
-            artist_id: _,
-        } => (SelectedSection::Management, SelectedItem::ArtistDetail),
-        Route::CollectorsPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Management, SelectedItem::Collectors),
-        Route::CollectorDetailPage {
-            lang: _,
-            agit_id: _,
-            collector_id: _,
-        } => (SelectedSection::Management, SelectedItem::CollectorDetail),
-        Route::DaoPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Hub, SelectedItem::Dao),
-        Route::OraclePage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Hub, SelectedItem::Oracle),
-        Route::FaqPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Hub, SelectedItem::Faq),
-        Route::ReportPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Analytics, SelectedItem::Report),
-        Route::TrafficPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Analytics, SelectedItem::Traffic),
-        Route::DesignPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::Design, SelectedItem::Design),
-        Route::ExtensionToolPage {
-            lang: _,
-            agit_id: _,
-        } => (SelectedSection::ExtensionTool, SelectedItem::ExtensionTool),
-        _ => {
-            tracing::error!("Unknown route: {}", route);
+        Route::SalesRequestPage { .. } => (SelectedSection::Orders, SelectedItem::SalesRequest),
+        Route::ShippingLabelPage { .. } => (SelectedSection::Orders, SelectedItem::ShippingLabel),
+
+        Route::RootPage { .. } | Route::NotFoundPage { .. } => {
             (SelectedSection::HomePage, SelectedItem::None)
         }
     }
@@ -137,21 +72,18 @@ pub fn Navigation(lang: Language, agit_id: i64) -> Element {
     let route = use_route::<Route>();
     let (selected_section, selected_item) = check_route(route);
     rsx! {
-        div { class: "flex flex-col p-8 gap-10.5 align-start",
+        div { class: "flex flex-col p-10 gap-12.5 align-start",
             ServiceLogo { width: "110", height: "24", class: "fill-white" }
             div { class: "flex flex-col gap-5 text-white text-base",
 
-                // Standalone sections without children
                 Section {
                     label: tr.home,
                     selected: selected_section == SelectedSection::HomePage,
                     to: Route::HomePage { lang, agit_id },
                 }
-                // Sections with children
                 Section {
                     label: tr.orders,
                     selected: selected_section == SelectedSection::Orders,
-                    has_children: true,
                     Item { selected: selected_item == SelectedItem::SalesRequest,
                         Link {
                             to: Route::SalesRequestPage {
@@ -174,7 +106,6 @@ pub fn Navigation(lang: Language, agit_id: i64) -> Element {
                 Section {
                     label: tr.management,
                     selected: selected_section == SelectedSection::Management,
-                    has_children: true,
                     Item { selected: selected_item == SelectedItem::Artworks,
                         Link {
                             to: Route::ArtworkPage {
@@ -198,7 +129,7 @@ pub fn Navigation(lang: Language, agit_id: i64) -> Element {
                     }
                     Item { selected: selected_item == SelectedItem::Collectors,
                         Link {
-                            to: Route::CollectorsPage {
+                            to: Route::CollectorPage {
                                 lang,
                                 agit_id,
                             },
@@ -209,7 +140,6 @@ pub fn Navigation(lang: Language, agit_id: i64) -> Element {
                 Section {
                     label: tr.hub,
                     selected: selected_section == SelectedSection::Hub,
-                    has_children: true,
                     Item { selected: selected_item == SelectedItem::Dao,
                         Link { to: Route::DaoPage { lang, agit_id }, {tr.dao} }
                     }
@@ -223,7 +153,6 @@ pub fn Navigation(lang: Language, agit_id: i64) -> Element {
                 Section {
                     label: tr.analytics,
                     selected: selected_section == SelectedSection::Analytics,
-                    has_children: true,
                     Item { selected: selected_item == SelectedItem::Report,
                         Link { to: Route::ReportPage { lang, agit_id }, {tr.report} }
                     }
@@ -237,7 +166,6 @@ pub fn Navigation(lang: Language, agit_id: i64) -> Element {
                         }
                     }
                 }
-                // Standalone sections without children
                 Section {
                     label: tr.design,
                     selected: selected_section == SelectedSection::Design,
@@ -262,33 +190,15 @@ fn Section(
     #[props(default = VNode::empty())] children: Element,
     selected: bool,
     #[props(default = None)] to: Option<Route>,
-    #[props(default = false)] has_children: bool,
 ) -> Element {
     let content = rsx! {
-        div { class: "relative",
-            // Add a green vertical line for selected sections with children
-            {
-                if selected && has_children {
-                    rsx! {
-                        div {
-                            class: "absolute left-0 top-0 bg-primary ",
-                            style: "width: 1px; height:38%; padding-bottom:5", // Thinner line
-                        }
-                    }
-                } else {
-                    rsx! {}
-                }
+        div { class: "gap-1",
+            div {
+                "aria-selected": selected,
+                class: "flex items-center hover:text-primary cursor-pointer transition-colors duration-200 ease-in-out border-l border-transparent aria-selected:border-primary aria-selected:text-primary py-2 px-3 ml-[1px] whitespace-nowrap",
+                {label}
             }
-            div { class: "pl-1",
-                div {
-                    class: format!(
-                        "flex items-center py-3 gap-3 hover:text-primary cursor-pointer transition-colors duration-200 ease-in-out {}",
-                        if selected { "text-primary" } else { "" },
-                    ),
-                    {label}
-                }
-                div { class: "ml-5", {children} }
-            }
+            div { class: "flex flex-col gap-1", {children} }
         }
     };
 
@@ -303,15 +213,14 @@ fn Section(
 #[component]
 fn Item(selected: bool, children: Element) -> Element {
     rsx! {
-        div { class: "flex items-center relative",
-            {
-                if selected {
-                    rsx! {
-                        span { class: "text-primary absolute -left-5 top-1/2 transform -translate-y-1/2", "↪" }
-                    }
-                } else {
-                    rsx! {}
-                }
+        div { class: "flex items-center gap-1",
+            BendArrowRight {
+                class: format!(
+                    "[&>path]:{}",
+                    if selected { "stroke-primary" } else { "stroke-transparent" },
+                ),
+                width: "18px",
+                height: "18px",
             }
             div {
                 class: format!(

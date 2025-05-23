@@ -188,16 +188,12 @@ pub fn NewCollectionModal(
                     "{selected_artworks.read().len()} {tr.artwork_selected}"
                 }
                 div { class: "flex gap-4",
-                    PrimaryButton {
-                        label: tr.cancel_btn_txt,
-                        onclick: move |_| on_close.call(()),
-                        disabled: false,
-                    }
+                    PrimaryButton { onclick: move |_| on_close.call(()), disabled: false, {tr.cancel_btn_txt} }
 
                     SecondaryButton {
-                        label: tr.confirm_btn_txt,
                         disabled: selected_artworks.read().is_empty(),
                         onclick: move |_| on_select_artworks.call(selected_artworks.read().clone()),
+                        {tr.confirm_btn_txt}
                     }
                 }
             }
