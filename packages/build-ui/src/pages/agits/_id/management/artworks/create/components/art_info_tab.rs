@@ -1,4 +1,4 @@
-use crate::components::button::ButtonWithIcon;
+// use crate::components::button::ButtonWithIcon;
 use crate::components::image_upload::FileUpload;
 use crate::components::input::TextArea;
 use crate::pages::agits::_id::management::artworks::controller::Controller;
@@ -33,23 +33,6 @@ pub fn ArtInfoTab(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
             }
         }
         // Action buttons
-        div { class: "flex justify-end space-x-4 mt-8",
-            ButtonWithIcon {
-                onclick: move |_| {},
-                icon: rsx! {
-                    arrows::ChevronLeft { class: "mr-2 [&>path]:stroke-white [&>circle]:stroke-white" }
-                },
-                label: tr.back,
-                disabled: ctrl.artwork_input_field().display_name.is_empty(),
-            }
-            ButtonWithIcon {
-                onclick: move |_| {},
-                icon: rsx! {
-                    other_devices::Save { class: "mr-2 [&>path]:stroke-white", height: 20, width: 20 }
-                },
-                label: tr.save,
-                disabled: ctrl.artwork_input_field().display_name.is_empty(),
-            }
-        }
+        div { class: "flex justify-end space-x-4 mt-8" }
     }
 }

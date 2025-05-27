@@ -11,7 +11,7 @@ pub mod checkbox;
 pub mod dropdown;
 pub mod input;
 pub mod option_list;
-
+pub mod toggle_switch;
 // TODO: If unused, remove this module
 pub mod add_button;
 pub mod all_filter_field;

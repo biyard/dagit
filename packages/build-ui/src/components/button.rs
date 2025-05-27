@@ -51,34 +51,6 @@ pub fn PrimaryButton(
     }
 }
 
-// TODO: REMOVE THIS COMPONENT
-#[component]
-pub fn ButtonWithIcon(
-    #[props(default = String::default())] class: String,
-    label: String,
-    icon: Element,
-    #[props(default = false)] disabled: bool,
-    onclick: EventHandler<MouseEvent>,
-) -> Element {
-    rsx! {
-        button {
-            class: format!(
-                "border border-white text-white px-4.5 py-3 flex items-center justify-center bg-black active:bg-primary/25 active:border-primary hover:bg-primary/25 hover:border-primary
-                                                                                                            disabled:border-neutral-80 disabled:text-neutral-80 disabled:bg-btn-disable {}",
-                class,
-            ),
-            onclick: move |e| {
-                if !disabled {
-                    onclick.call(e);
-                }
-            },
-            disabled,
-            {icon}
-            span { class: "ml-2", "{label}" } // Render the label with spacing
-        }
-    }
-}
-
 #[component]
 pub fn IconButton(
     children: Element,
@@ -95,7 +67,7 @@ pub fn IconButton(
             div { class: "size-6 [&>svg>path]:stroke-white group-hover:[&>svg>path]:stroke-black",
                 {children}
             }
-        
+
         }
     }
 }

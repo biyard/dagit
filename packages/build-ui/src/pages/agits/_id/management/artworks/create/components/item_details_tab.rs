@@ -1,4 +1,4 @@
-use crate::components::button::ButtonWithIcon;
+// use crate::components::button::ButtonWithIcon;
 use crate::components::{dropdown_input::DropdownInput, input::Input2};
 use crate::pages::agits::_id::management::artworks::controller::Controller;
 use crate::pages::agits::_id::management::artworks::create::i18n::CreateArtworkPageTranslate;
@@ -178,23 +178,6 @@ pub fn ItemDetailsTab(lang: Language, agit_id: ReadOnlySignal<i64>) -> Element {
             }
         }
         // Action buttons
-        div { class: "flex justify-end space-x-4 mt-8",
-            ButtonWithIcon {
-                onclick: move |_| {},
-                icon: rsx! {
-                    other_devices::Save { class: "mr-2 [&>path]:stroke-white", height: 20, width: 20 }
-                },
-                label: tr.save,
-                disabled: ctrl.artwork_input_field().display_name.is_empty(),
-            }
-            ButtonWithIcon {
-                onclick: move |_| {},
-                icon: rsx! {
-                    arrows::ChevronLeft { class: "mr-2 [&>path]:stroke-white [&>circle]:stroke-white" }
-                },
-                label: tr.images,
-                disabled: ctrl.artwork_input_field().display_name.is_empty(),
-            }
-        }
+        div { class: "flex justify-end space-x-4 mt-8" }
     }
 }

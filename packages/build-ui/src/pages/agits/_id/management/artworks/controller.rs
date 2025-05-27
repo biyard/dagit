@@ -1,9 +1,17 @@
-use bdk::prelude::{by_types::QueryResponse, *};
+#![allow(unused)]
+use bdk::prelude::*;
+
+use by_types::QueryResponse;
+use dioxus_popup::PopupService;
+
 use common::tables::prelude::{Artwork, ArtworkQuery, ArtworkSummary};
 
 use crate::components::table::{SortConfig, SortDirection, TableHeaderCellProps};
 
-use super::i18n::ArtworkTranslate;
+use super::{
+    components::{EditRowModal, EditRowModalTranslate},
+    i18n::ArtworkTranslate,
+};
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum ViewMode {
@@ -33,6 +41,7 @@ impl From<&str> for Filter {
 #[derive(Clone, Copy, DioxusController)]
 pub struct Controller {
     lang: Language,
+    popup: PopupService,
     agit_id: ReadOnlySignal<i64>,
     view_mode: Signal<ViewMode>,
 
@@ -48,6 +57,7 @@ pub struct Controller {
 
 impl Controller {
     pub fn new(lang: Language, agit_id: ReadOnlySignal<i64>) -> Result<Self, RenderError> {
+        let popup: PopupService = use_context();
         let tr: ArtworkTranslate = translate(&lang);
         let artworks: Resource<QueryResponse<ArtworkSummary>> =
             use_server_future(move || async move {
@@ -58,10 +68,24 @@ impl Controller {
                     .await
                     .unwrap_or_default()
             })?;
+        use_effect(move || {
+            let mut popup: PopupService = use_context();
+            let tr: EditRowModalTranslate = translate(&lang);
 
+            popup
+                .open(rsx! {
+                    EditRowModal {
+                        lang,
+                        on_close: move |_| {},
+                        on_save: move |items| {},
+                    }
+                })
+                .with_title(tr.title)
+                .with_id("edit_row_modal");
+        });
         let ctrl: Controller = Self {
             lang,
-
+            popup,
             agit_id,
             view_mode: use_signal(|| ViewMode::Table),
             filter: use_signal(|| Filter::All),
@@ -144,6 +168,27 @@ impl Controller {
         self.filter.set(filter);
     }
 
+    pub fn open_edit_row_modal(&mut self) {
+        let tr: EditRowModalTranslate = translate(&self.lang);
+        let mut popup = self.popup.clone();
+        let ctrl = self.clone();
+        popup
+            .open(rsx! {
+                EditRowModal {
+                    lang: self.lang,
+                    on_close: move |_| {
+                        popup.close();
+                    },
+                    on_save: move |(sales_menu, attributes_menu)| {
+                        tracing::debug!("Selected items: {:?}", sales_menu);
+                        tracing::debug!("Selected attributes: {:?}", attributes_menu);
+                        popup.close();
+                    },
+                }
+            })
+            .with_title(tr.title)
+            .with_id("edit_row_modal");
+    }
     pub fn handle_search(&mut self, search: String) {
         tracing::debug!("Searching for: {}", search);
         // Handle search logic here

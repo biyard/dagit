@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+use crate::components::popup_zone::PopupZone;
 use crate::{routes::Route, services::user_service::UserService};
 use bdk::prelude::{by_components::loaders::cube_loader::CubeLoader, *};
 
@@ -16,7 +17,9 @@ pub fn NavigationLayout(lang: Language, agit_id: i64) -> Element {
 
     rsx! {
         div { class: "flex flex-row bg-background min-h-svh",
+            PopupZone {}
             Navigation { lang, agit_id }
+
             SuspenseBoundary {
                 fallback: |_| {
                     rsx! {
