@@ -7,7 +7,6 @@ pub fn SecondaryButton(
     #[props(default = false)] disabled: bool,
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
-    tracing::debug!("SecondaryButton: class: {}, disabled: {}", class, disabled);
     rsx! {
         button {
             class: format!(
@@ -33,20 +32,18 @@ pub fn PrimaryButton(
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
     rsx! {
-        div { class: "flex flex-col gap-2",
-            button {
-                class: format!(
-                    "px-4.5 py-3 border border-black text-white bg-black active:bg-primary/25 active:border-primary hover:bg-primary/25 hover:border-primary disabled:border-neutral-80 disabled:text-neutral-80 disabled:bg-btn-disable {}",
-                    class,
-                ),
-                onclick: move |e| {
-                    if !disabled {
-                        onclick.call(e);
-                    }
-                },
-                disabled,
-                {children}
-            }
+        button {
+            class: format!(
+                "px-4.5 py-3 border border-black text-white bg-black active:bg-primary/25 active:border-primary hover:bg-primary/25 hover:border-primary disabled:border-neutral-80 disabled:text-neutral-80 disabled:bg-btn-disable {}",
+                class,
+            ),
+            onclick: move |e| {
+                if !disabled {
+                    onclick.call(e);
+                }
+            },
+            disabled,
+            {children}
         }
     }
 }
@@ -67,7 +64,6 @@ pub fn IconButton(
             div { class: "size-6 [&>svg>path]:stroke-white group-hover:[&>svg>path]:stroke-black",
                 {children}
             }
-
         }
     }
 }

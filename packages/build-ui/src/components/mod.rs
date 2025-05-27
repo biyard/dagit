@@ -6,6 +6,7 @@ pub use icons::wallet_icon::WalletIcon;
 
 pub mod popup_zone;
 
+pub mod artwork_grid;
 pub mod button;
 pub mod checkbox;
 pub mod dropdown;
