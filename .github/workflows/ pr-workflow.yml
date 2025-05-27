@@ -1,0 +1,155 @@
+name: PR Testing
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ssh-key: ${{ secrets.PULL_KEY_REPO }}
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy, rustfmt
+          target: wasm32-unknown-unknown
+          toolchain: stable
+      - name: Install PostgreSQL Client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Initialize Database SQL
+        run: |
+          psql postgresql://postgres:postgres@localhost:5432/test -f ./deps/rust-sdk/fixtures/sql/init.sql
+
+      - name: test
+        env:
+          RUSTFLAGS: "-A warnings"
+          DATABASE_TYPE: postgres
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          BUCKET_NAME: mock
+          RUST_TEST_THREADS: 1
+          
+        run: |
+          cd packages/api && make test
+
+  main-ui:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ssh-key: ${{ secrets.PULL_KEY_REPO }}
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy, rustfmt
+          target: wasm32-unknown-unknown
+          toolchain: stable
+      - uses: cargo-bins/cargo-binstall@main
+      - name: Install dioxus-cli
+        run: |
+          cargo binstall dioxus-cli --force
+
+      - name: Dioxus Lint
+        env:
+          REGION: ap-northeast-2
+          ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          dx check -p main-ui
+
+      - name: Build test
+        env:
+          REGION: ap-northeast-2
+          ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVICE: main-ui
+        run: |
+          npm i -g tailwindcss@3
+          make build
+
+  build-ui:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ssh-key: ${{ secrets.PULL_KEY_REPO }}
+        
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy, rustfmt
+          target: wasm32-unknown-unknown
+          toolchain: stable
+      - uses: cargo-bins/cargo-binstall@main
+      - name: Install dioxus-cli
+        run: |
+          cargo binstall dioxus-cli --force
+        
+      - name: Dioxus Lint
+        env:
+         REGION: ap-northeast-2
+         ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         
+        run: |
+          dx check -p build-ui
+        
+      - name: Build test
+        env:
+         REGION: ap-northeast-2
+         ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         SERVICE: build-ui
+        run: |
+          make build        
+
+  api:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ssh-key: ${{ secrets.PULL_KEY_REPO }}
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy, rustfmt
+          target: wasm32-unknown-unknown
+          toolchain: stable
+      - uses: cargo-bins/cargo-binstall@main
+      - name: Install dioxus-cli
+        run: |
+          cargo binstall dioxus-cli --force
+
+      - name: Testing
+        env:
+          REGION: ap-northeast-2
+          ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVICE: api
+        run: |
+          make build

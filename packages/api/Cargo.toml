@@ -1,6 +1,6 @@
 [package]
 name = "api"
-version.workspace = true
+version = "0.1.0"
 authors.workspace = true
 description.workspace = true
 documentation.workspace = true
@@ -8,21 +8,28 @@ edition.workspace = true
 repository.workspace = true
 license.workspace = true
 
+
 [dependencies]
-by-axum.workspace = true
-by-types.workspace = true
 serde = { workspace = true, features = ["derive"] }
 reqwest = { workspace = true, features = ["json"] }
 tokio = { version = "1.43.0", features = ["full"] }
-tracing.workspace = true
-sqlx = { version = "0.8.3", features = [
-    "sqlite",
-    "postgres",
-    "runtime-tokio",
-    "time",
-    "bigdecimal",
-] }
-thiserror = { version = "2.0.11" }
+sqlx = { workspace = true }
+
+common = { workspace = true, features = ["server"] }
+
+bdk = { workspace = true, features = ["be"] }
+
+chrono = "0.4.40"
+
+
 [features]
 default = []
-lambda = ["by-axum/lambda"]
+server = []
+lambda = ["bdk/lambda"]
+
+[dev-dependencies]
+rest-api = { workspace = true, features = ["test"] }
+ic-agent = "0.39.3"
+ring = "=0.17.14"
+base64 = "0.22.1"
+uuid = { version = "1.15.1", features = ["v4"] }

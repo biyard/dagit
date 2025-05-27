@@ -1,6 +1,4 @@
-use dioxus::prelude::*;
-use dioxus_logger::tracing;
-use dioxus_translate::Language;
+use bdk::prelude::*;
 
 use crate::utils::format_number::format_number;
 #[component]
@@ -10,13 +8,10 @@ pub fn PillButton(
     selected: bool,
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
-    let class =  format!("{} border border-black rounded-full justify-center items-center px-4 py-1 text-base font-normal leading-normal tracking-wide {}",
+    let class = format!(
+        "{} border border-black rounded-full justify-center items-center px-4 py-1 text-base font-normal leading-normal tracking-wide {}",
         class,
-        if selected {
-            "bg-black text-white"
-        } else {
-            ""
-        }
+        if selected { "bg-black text-white" } else { "" }
     );
     rsx! {
         button { class, onclick, {text} }
@@ -40,8 +35,6 @@ pub fn CategorySelector(options: Vec<String>, onchange: EventHandler<usize>) -> 
                     },
                 }
             }
-        
-
         }
     }
 }
@@ -87,13 +80,11 @@ pub fn Discover(
                         "ARTIST"
                     }
                     p { class: "text-black text-2xl font-medium", "{artist_name}" }
-                
                 }
                 div { class: "text-[#6b6b6b] text-base font-light leading-normal tracking-wide",
                     "{artist_description}"
                 }
             }
-        
         }
     }
 }
@@ -121,7 +112,6 @@ pub fn MainPage(lang: Language) -> Element {
                         class: "w-full h-full object-cover",
                         src: "https://loremflickr.com/400/390?random=1",
                     }
-                
                 }
             }
             article { class: "grid grid-cols-12 gap-6 [&>div>div>img]:h-[390px]",
@@ -158,7 +148,6 @@ pub fn MainPage(lang: Language) -> Element {
                         },
                     }
                 }
-            
             }
             article { class: "flex flex-col gap-30 w-full",
                 Section {
@@ -300,7 +289,6 @@ pub fn MainPage(lang: Language) -> Element {
                                 }
                             }
                         }
-                    
                     }
                 }
                 Section {
@@ -392,7 +380,6 @@ pub fn ArtworkCard(artwork: Artwork) -> Element {
                 }
                 p { class: "text-base font-bold leading-normal tracking-wide", "{artwork.price}" }
             }
-        
         }
     }
 }
@@ -525,7 +512,6 @@ pub fn UpcomingSlide(
                         {schedule}
                     }
                     p { class: "text-[#6b6b6b] text-[15px] font-light py-5", {description} }
-                
                 }
                 div { class: "flex flex-row gap-2.5",
                     div { class: "aspect-square bg-black h-full" }
@@ -536,8 +522,6 @@ pub fn UpcomingSlide(
                         }
                     }
                 }
-            
-
 
             }
         }

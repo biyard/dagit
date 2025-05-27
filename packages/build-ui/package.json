@@ -1,0 +1,14 @@
+{
+  "name": "build-ui",
+  "version": "1.0.0",
+  "description": "Build UI service for d.AGIT platform",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.4"
+  }
+}

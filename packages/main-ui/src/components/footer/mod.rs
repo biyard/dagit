@@ -1,5 +1,4 @@
-use dioxus::prelude::*;
-use dioxus_translate::Language;
+use bdk::prelude::*;
 
 use crate::routes::Route;
 

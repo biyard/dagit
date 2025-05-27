@@ -1,5 +1,4 @@
-#![allow(dead_code)]
-use dioxus_logger::tracing::Level;
+use bdk::prelude::dioxus_logger::tracing::Level;
 
 #[derive(Debug)]
 pub struct Config {

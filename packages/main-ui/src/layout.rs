@@ -1,9 +1,6 @@
 #![allow(non_snake_case)]
-use dioxus::prelude::*;
-
-use dioxus_translate::Language;
-
 use crate::routes::Route;
+use bdk::prelude::*;
 
 use crate::components::prelude::*;
 

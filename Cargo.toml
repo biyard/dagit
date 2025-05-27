@@ -1,38 +1,45 @@
 [workspace]
-members = ["packages/api", "packages/main-ui"]
+members = [
+    "packages/api",
+    "packages/main-ui",
+    "packages/common",
+    "packages/build-ui",
+]
 exclude = ["deps"]
 resolver = "2"
 
 [workspace.package]
-version = "1.0.0"
 authors = ["Biyard"]
 description = "d.AGIT: Digital Assets Guardianship & Interchange Terminal"
 documentation = "https://dagit.club"
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/biyard/dagit"
 license = "Apache-2.0"
 
 [workspace.dependencies]
-dioxus = { version = "0.6.3" }
-dioxus-logger = { version = "0.6.2" }
-tracing = { version = "0.1.41" }
+
+bdk = { path = "deps/rust-sdk/packages/bdk" }
+
 serde = { version = "1.0.218" }
 reqwest = { version = "0.12.12" }
-#rust-sdk
-by-axum = { path = "deps/rust-sdk/packages/by-axum" }
-by-components = { path = "deps/rust-sdk/packages/by-components" }
-by-macros = { path = "deps/rust-sdk/packages/by-macros" }
-by-types = { path = "deps/rust-sdk/packages/by-types" }
-dioxus-translate = { path = "deps/rust-sdk/packages/dioxus-translate", features = [
-    "ko",
-] }
-dioxus-aws = { path = "deps/rust-sdk/packages/dioxus-aws" }
-rest-api = { path = "deps/rust-sdk/packages/rest-api" }
-easy-dynamodb = { path = "deps/rust-sdk/packages/easy-dynamodb" }
+serde_json = { version = "1.0.139" }
+serde_urlencoded = { version = "0.7.1" }
+chrono = { version = "0.4.40" }
 
+dioxus-oauth = { path = "./deps/rust-sdk/packages/dioxus-oauth" }
+google-wallet = { path = "./deps/rust-sdk/packages/google-wallet" }
+rest-api = { path = "./deps/rust-sdk/packages/rest-api" }
+
+sqlx = { version = "0.8.3", features = [
+    "sqlite",
+    "postgres",
+    "runtime-tokio",
+    "time",
+] }
+
+common = { path = "packages/common" }
 #FIXME: `rest-api` crate has `getrandom` dependency, but it's listed here
 getrandom = { version = "0.2", features = ["js"] }
-
 
 [profile]
 

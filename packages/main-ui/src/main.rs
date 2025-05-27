@@ -1,4 +1,5 @@
-use dioxus::prelude::*;
+#![allow(non_snake_case)]
+use bdk::prelude::*;
 
 pub mod config;
 pub mod layout;
@@ -9,9 +10,9 @@ pub mod routes;
 pub mod utils;
 use routes::Route;
 
-const FAVICON: Asset = asset!("/assets/favicon.svg");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+const FAVICON: Asset = asset!("/public/favicon.svg");
+const MAIN_CSS: Asset = asset!("/public/main.css");
+const TAILWIND_CSS: Asset = asset!("/public/tailwind.css");
 
 fn main() {
     dioxus_logger::init(config::get().log_level).expect("failed to init logger");
@@ -21,6 +22,8 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    let css = include_str!("../public/theme.css");
+
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
@@ -29,21 +32,8 @@ fn App() -> Element {
             rel: "stylesheet",
             href: "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css",
         }
-        load_tailwindcss {}
+        document::Style { r#type: "text/tailwindcss", {css} }
+        document::Script { src: "https://unpkg.com/@tailwindcss/browser@4.0.12/dist/index.global.js" }
         Router::<Route> {}
     }
-}
-
-#[cfg(not(feature = "lambda"))]
-#[allow(dead_code)]
-fn load_tailwindcss() -> Element {
-    rsx! {
-        script { src: "https://unpkg.com/@tailwindcss/browser@4" }
-    }
-}
-
-#[cfg(feature = "lambda")]
-#[allow(dead_code)]
-fn load_tailwindcss() -> Element {
-    rsx! {}
 }

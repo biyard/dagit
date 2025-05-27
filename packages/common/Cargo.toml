@@ -1,0 +1,27 @@
+[package]
+name = "common"
+version = "0.1.0"
+authors.workspace = true
+description.workspace = true
+documentation.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+reqwest.workspace = true
+gloo-net = "0.6.0"
+serde.workspace = true
+validator = { version = "0.20.0", features = ["derive"] }
+
+sqlx = { workspace = true, optional = true }
+serde_json.workspace = true
+serde_urlencoded.workspace = true
+bdk.workspace = true
+
+[features]
+default = []
+server = ["bdk/be", "sqlx"]
+web = ["bdk/web"]
+
+# server = ["sqlx", "schemars", "by-macros/server", "by-axum"]

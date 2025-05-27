@@ -1,5 +1,4 @@
-use dioxus::prelude::*;
-use dioxus_translate::Language;
+use bdk::prelude::*;
 
 #[allow(unused)]
 use crate::layout::RootLayout;
@@ -11,8 +10,6 @@ use crate::pages::prelude::*;
 #[rustfmt::skip]
 pub enum Route {
     #[nest("/:lang")]
-        #[route("/platform")]
-        PlatformPage { lang : Language},
         #[layout(RootLayout)]
             #[route("/")]
             MainPage { lang: Language },
