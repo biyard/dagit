@@ -126,12 +126,8 @@ fn Accordion(
                 }
             }
             div { class: "flex flex-col group-aria-expanded:hidden [&>div]:border-b [&>div]:border-neutral-80 max-h-125 overflow-y-scroll",
-
                 {children}
             }
-        
-
-
         }
     }
 }

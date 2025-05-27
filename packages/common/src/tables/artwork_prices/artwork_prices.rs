@@ -24,3 +24,9 @@ pub enum Currency {
     ETH = 2,
     BTC = 3,
 }
+
+impl Currency {
+    pub fn iter() -> impl Iterator<Item = Currency> {
+        [Currency::ETH, Currency::BTC].iter().copied()
+    }
+}

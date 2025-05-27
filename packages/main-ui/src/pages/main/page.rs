@@ -522,7 +522,7 @@ pub fn UpcomingSlide(
                         }
                     }
                 }
-
+            
             }
         }
     }

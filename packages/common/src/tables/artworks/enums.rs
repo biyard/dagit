@@ -109,7 +109,6 @@ pub enum Theme {
 
 #[derive(Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, Translate, Copy)]
 #[cfg_attr(feature = "server", derive(schemars::JsonSchema, aide::OperationIo))]
-
 pub enum Medium {
     #[default]
     #[translate(ko = "Digita Art", en = "Digital Art")]
@@ -148,17 +147,21 @@ pub enum Medium {
     Nft = 17,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, Copy)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, ApiModel, Copy, Translate)]
 #[cfg_attr(feature = "server", derive(schemars::JsonSchema, aide::OperationIo))]
 pub enum WaysToSell {
     #[default]
+    #[translate(ko = "Purchase", en = "Purchase")]
     Purchase = 1,
+    #[translate(ko = "Offer", en = "Offer")]
     Offer = 2,
+    #[translate(ko = "Bid", en = "Bid")]
     Bid = 3,
+    #[translate(ko = "Directly", en = "Directly")]
     Directly = 4,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, Translate, Copy)]
+#[derive(Debug, Clone, Eq, PartialEq, Default, ApiModel, Copy, Translate)]
 #[cfg_attr(feature = "server", derive(schemars::JsonSchema, aide::OperationIo))]
 pub enum ArtStyle {
     #[default]
@@ -242,17 +245,17 @@ pub enum Material {
     #[translate(ko = "Aquatint", en = "Aquatint")]
     Aquatint = 3,
     #[translate(ko = "Arches Paper", en = "Arches Paper")]
-    ArchesPaper = 4, // Rust 식별자에 맞게 변경
+    ArchesPaper = 4,
     #[translate(ko = "Art Paper", en = "Art Paper")]
-    ArtPaper = 5, // Rust 식별자에 맞게 변경
+    ArtPaper = 5,
     #[translate(ko = "Blown Glass", en = "Blown Glass")]
-    BlownGlass = 6, // Rust 식별자에 맞게 변경
+    BlownGlass = 6,
     #[translate(ko = "Brass", en = "Brass")]
     Brass = 7,
     #[translate(ko = "Bronze", en = "Bronze")]
     Bronze = 8,
     #[translate(ko = "C-Print", en = "C-Print")]
-    CPrint = 9, // Rust 식별자에 맞게 변경
+    CPrint = 9,
     #[translate(ko = "Canvas", en = "Canvas")]
     Canvas = 10,
     #[translate(ko = "Cardboard", en = "Cardboard")]
@@ -278,7 +281,7 @@ pub enum Material {
     #[translate(ko = "Digital", en = "Digital")]
     Digital = 21,
     #[translate(ko = "Dry Point", en = "Dry Point")]
-    DryPoint = 22, // Rust 식별자에 맞게 변경
+    DryPoint = 22,
     #[translate(ko = "Dye", en = "Dye")]
     Dye = 23,
     #[translate(ko = "Earthenware", en = "Earthenware")]
@@ -296,7 +299,7 @@ pub enum Material {
     #[translate(ko = "Foam", en = "Foam")]
     Foam = 30,
     #[translate(ko = "Giclée", en = "Giclée")]
-    Giclee = 31, // 특수 문자 제거
+    Giclee = 31,
     #[translate(ko = "Glass", en = "Glass")]
     Glass = 32,
     #[translate(ko = "Glaze", en = "Glaze")]
@@ -308,7 +311,7 @@ pub enum Material {
     #[translate(ko = "Ink", en = "Ink")]
     Ink = 36,
     #[translate(ko = "Inkjet Print", en = "Inkjet Print")]
-    InkjetPrint = 37, // Rust 식별자에 맞게 변경
+    InkjetPrint = 37,
     #[translate(ko = "Iron", en = "Iron")]
     Iron = 38,
     #[translate(ko = "Lacquer", en = "Lacquer")]
@@ -330,7 +333,7 @@ pub enum Material {
     #[translate(ko = "Metal", en = "Metal")]
     Metal = 47,
     #[translate(ko = "Mixed Media", en = "Mixed Media")]
-    MixedMedia = 48, // Rust 식별자에 맞게 변경
+    MixedMedia = 48,
     #[translate(ko = "Monoprint", en = "Monoprint")]
     Monoprint = 49,
     #[translate(ko = "Monotype", en = "Monotype")]
@@ -370,23 +373,23 @@ pub enum Material {
     #[translate(ko = "Powder", en = "Powder")]
     Powder = 67,
     #[translate(ko = "Rag Paper", en = "Rag Paper")]
-    RagPaper = 68, // Rust 식별자에 맞게 변경
+    RagPaper = 68,
     #[translate(ko = "Resin", en = "Resin")]
     Resin = 69,
     #[translate(ko = "Screen Print", en = "Screen Print")]
-    ScreenPrint = 70, // Rust 식별자에 맞게 변경
+    ScreenPrint = 70,
     #[translate(ko = "Silk", en = "Silk")]
     Silk = 71,
     #[translate(ko = "Silver", en = "Silver")]
     Silver = 72,
     #[translate(ko = "Silver Gelatin", en = "Silver Gelatin")]
-    SilverGelatin = 73, // Rust 식별자에 맞게 변경
+    SilverGelatin = 73,
     #[translate(ko = "Sound", en = "Sound")]
     Sound = 74,
     #[translate(ko = "Spray Paint", en = "Spray Paint")]
-    SprayPaint = 75, // Rust 식별자에 맞게 변경
+    SprayPaint = 75,
     #[translate(ko = "Stainless Steel", en = "Stainless Steel")]
-    StainlessSteel = 76, // Rust 식별자에 맞게 변경
+    StainlessSteel = 76,
     #[translate(ko = "Steel", en = "Steel")]
     Steel = 77,
     #[translate(ko = "Stone", en = "Stone")]
@@ -418,7 +421,7 @@ pub enum Material {
     #[translate(ko = "Wool", en = "Wool")]
     Wool = 91,
     #[translate(ko = "Wove Paper", en = "Wove Paper")]
-    WovePaper = 92, // Rust 식별자에 맞게 변경
+    WovePaper = 92,
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]

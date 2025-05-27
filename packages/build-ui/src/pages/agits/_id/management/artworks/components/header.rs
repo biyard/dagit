@@ -26,8 +26,8 @@ translate! {
 #[component]
 pub fn Header(
     lang: Language,
-    toggle_side_bar: EventHandler<bool>,
-    on_view_change: EventHandler<bool>,
+    toggle_side_bar: EventHandler<()>,
+    toggle_view_mode: EventHandler<()>,
     on_filter_change: EventHandler<Filter>,
     on_search: EventHandler<String>,
     on_click_button: EventHandler<MouseEvent>,
@@ -37,15 +37,22 @@ pub fn Header(
         .iter()
         .map(|v| v.translate(&lang).to_string())
         .collect::<Vec<_>>();
+
     rsx! {
         div { class: "flex gap-3 w-full",
-            IconButton { onclick: move |_| {}, Sliders {} }
-            IconButton { onclick: move |_| {}, Window {} }
+            IconButton { onclick: move |_| { toggle_side_bar.call(()) }, Sliders {} }
+            IconButton {
+                onclick: move |_| {
+                    toggle_view_mode.call(());
+                },
+                Window {}
+            }
             DropDown {
+                id: "filter-dropdown",
                 class: "min-w-[200px]",
-                default_value: Filter::All.translate(&lang).to_string(),
+                placeholder: Filter::All.translate(&lang).to_string(),
                 options,
-                on_change: move |evt: String| {
+                onchange: move |evt: String| {
                     let filter = Filter::from(evt.as_str());
                     on_filter_change.call(filter);
                 },
@@ -58,12 +65,11 @@ pub fn Header(
                 },
             }
             SecondaryButton { onclick: on_click_button,
-                div { class: "flex gap-1 text-white",
+                div { class: "flex gap-1 text-white whitespace-nowrap",
                     Add { class: "[&>path]:stroke-white" }
                     {tr.new_artwork}
                 }
             }
-        
         }
     }
 }

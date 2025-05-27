@@ -1,4 +1,3 @@
-#![allow(unused)]
 use bdk::prelude::*;
 
 use by_types::QueryResponse;
@@ -6,10 +5,16 @@ use dioxus_popup::PopupService;
 
 use common::tables::prelude::{Artwork, ArtworkQuery, ArtworkSummary};
 
-use crate::components::table::{SortConfig, SortDirection, TableHeaderCellProps};
+use crate::{
+    components::{
+        artwork_grid::GridItemProps,
+        table::{SortConfig, SortDirection, TableHeaderCellProps},
+    },
+    routes::Route,
+};
 
 use super::{
-    components::{EditRowModal, EditRowModalTranslate},
+    components::edit_row_modal::{EditRowModal, EditRowModalTranslate},
     i18n::ArtworkTranslate,
 };
 
@@ -25,6 +30,21 @@ pub enum Filter {
     All,
     NFT,
     Physical,
+}
+
+impl From<ArtworkSummary> for GridItemProps {
+    fn from(value: ArtworkSummary) -> Self {
+        let artist = value
+            .artist
+            .get(0)
+            .map_or("Unknown".to_string(), |a| a.name.clone());
+        GridItemProps {
+            id: value.id,
+            title: value.title,
+            artist_name: artist,
+            image_url: value.image_url,
+        }
+    }
 }
 
 impl From<&str> for Filter {
@@ -68,26 +88,12 @@ impl Controller {
                     .await
                     .unwrap_or_default()
             })?;
-        use_effect(move || {
-            let mut popup: PopupService = use_context();
-            let tr: EditRowModalTranslate = translate(&lang);
 
-            popup
-                .open(rsx! {
-                    EditRowModal {
-                        lang,
-                        on_close: move |_| {},
-                        on_save: move |items| {},
-                    }
-                })
-                .with_title(tr.title)
-                .with_id("edit_row_modal");
-        });
         let ctrl: Controller = Self {
             lang,
             popup,
             agit_id,
-            view_mode: use_signal(|| ViewMode::Table),
+            view_mode: use_signal(|| ViewMode::Gallery),
             filter: use_signal(|| Filter::All),
             show_side_bar: use_signal(|| false),
 
@@ -96,52 +102,52 @@ impl Controller {
                 vec![
                     TableHeaderCellProps {
                         label: tr.title.to_string(),
-                        width: "100px".to_string(),
+                        min_width: "100px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.attributes.to_string(),
-                        width: "110px".to_string(),
+                        min_width: "110px".to_string(),
                         sortable: false,
                     },
                     TableHeaderCellProps {
                         label: tr.ways_to_sell.to_string(),
-                        width: "150px".to_string(),
+                        min_width: "150px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.owner.to_string(),
-                        width: "100px".to_string(),
+                        min_width: "100px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.current_price.to_string(),
-                        width: "150px".to_string(),
+                        min_width: "150px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.average_price.to_string(),
-                        width: "150px".to_string(),
+                        min_width: "150px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.price_change.to_string(),
-                        width: "150px".to_string(),
+                        min_width: "150px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.volume.to_string(),
-                        width: "150px".to_string(),
+                        min_width: "150px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.royalty.to_string(),
-                        width: "100px".to_string(),
+                        min_width: "100px".to_string(),
                         sortable: true,
                     },
                     TableHeaderCellProps {
                         label: tr.status.to_string(),
-                        width: "100px".to_string(),
+                        min_width: "100px".to_string(),
                         sortable: true,
                     },
                 ]
@@ -153,14 +159,14 @@ impl Controller {
     }
 
     pub fn toggle_side_bar(&mut self) {
+        tracing::debug!("Toggling side bar visibility, {}", self.show_side_bar());
         self.show_side_bar.toggle();
     }
 
-    pub fn set_view_mode(&mut self, value: bool) {
-        if value {
-            self.view_mode.set(ViewMode::Gallery);
-        } else {
-            self.view_mode.set(ViewMode::Table);
+    pub fn toggle_view_mode(&mut self) {
+        match self.view_mode() {
+            ViewMode::Gallery => self.view_mode.set(ViewMode::Table),
+            ViewMode::Table => self.view_mode.set(ViewMode::Gallery),
         }
     }
 
@@ -171,7 +177,6 @@ impl Controller {
     pub fn open_edit_row_modal(&mut self) {
         let tr: EditRowModalTranslate = translate(&self.lang);
         let mut popup = self.popup.clone();
-        let ctrl = self.clone();
         popup
             .open(rsx! {
                 EditRowModal {
@@ -194,10 +199,6 @@ impl Controller {
         // Handle search logic here
     }
 
-    pub fn handle_add_artwork(&mut self) {
-        // Handle add artwork logic here
-    }
-
     pub fn handle_sort(&mut self, key: &str) {
         let current_sort_config = self.sort_config();
         match current_sort_config {
@@ -217,5 +218,19 @@ impl Controller {
                 }));
             }
         }
+    }
+
+    pub fn handle_artwork_click(&mut self, id: i64) {
+        tracing::debug!("Artwork clicked with ID: {}", id);
+        // Handle artwork click logic here
+    }
+
+    pub fn handle_add_artwork(&mut self) {
+        tracing::debug!("Creating new artwork");
+        let nav = use_navigator();
+        nav.push(Route::CreateArtworkPage {
+            lang: self.lang,
+            agit_id: self.agit_id(),
+        });
     }
 }
