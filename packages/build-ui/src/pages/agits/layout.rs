@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+use crate::components::popup_zone::PopupZone;
 use crate::{routes::Route, services::user_service::UserService};
 use bdk::prelude::{by_components::loaders::cube_loader::CubeLoader, *};
 
@@ -15,15 +16,17 @@ pub fn NavigationLayout(lang: Language, agit_id: i64) -> Element {
     });
 
     rsx! {
-        div { class: "flex flex-row bg-background min-h-svh",
+        div { class: "flex flex-row bg-background min-h-svh max-w-screen overflow-x-hidden",
+            PopupZone {}
             Navigation { lang, agit_id }
+
             SuspenseBoundary {
                 fallback: |_| {
                     rsx! {
                         div { class: "w-full h-screen flex justify-center items-center", CubeLoader {} }
                     }
                 },
-                div { class: "py-10 px-20 w-full", Outlet::<Route> {} }
+                div { class: "py-10 px-20 w-full overflow-x-scroll flex flex-col", Outlet::<Route> {} }
             }
         }
     }

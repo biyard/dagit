@@ -3,9 +3,12 @@ use bdk::prelude::*;
 use by_types::QueryResponse;
 use validator::Validate;
 
-use crate::tables::prelude::{ArtworkOwnership, ArtworkPrice};
+use crate::tables::{
+    artists::Artist,
+    prelude::{ArtworkOwnership, ArtworkPrice},
+};
 
-use super::{ArtStyle, Material, Medium, Rarity, Size, Theme, WaysToSell, Weight};
+use super::{ArtStyle, Material, Medium, Rarity, Royalty, Size, Theme, WaysToSell, Weight};
 #[derive(
     Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, dioxus_translate::Translate, Copy,
 )]
@@ -40,23 +43,22 @@ pub struct Artwork {
     // Sale Info
     #[api_model(summary, action = create)]
     pub ways_to_sell: WaysToSell,
-
     #[api_model(summary, action = create, nullable)]
     pub rarity: Option<Rarity>,
     #[api_model(summary, action = create)]
     pub stock: Option<i64>,
-
+    #[api_model(summary, action = create, type = JSONB)]
+    pub royalty: Royalty,
     #[api_model(summary, action = create, action_by_id = update, nullable)]
     pub lockup_started_at: Option<i64>,
     #[api_model(summary, action = create, action_by_id = update, nullable)]
     pub lockup_ended_at: Option<i64>,
 
     // Attributes
+    #[api_model(summary, action = create, type = Integer)]
+    pub medium: Medium,
     #[api_model(summary, action = create, type = JSONB)]
-    pub medium: Vec<Medium>,
-    #[api_model(summary, action = create, type = JSONB)]
-    pub theme: Vec<Theme>,
-
+    pub theme: Theme,
     #[api_model(summary, action = create, type = JSONB)]
     pub art_style: Vec<ArtStyle>,
     #[api_model(summary, action = create, type = JSONB)]
@@ -85,8 +87,8 @@ pub struct Artwork {
     pub price_change_7d: ArtworkPrice,
 
     // Art Info
-    #[api_model(action = create, type = JSONB)]
-    pub image_urls: Vec<String>,
+    #[api_model(summary, action = create)]
+    pub image_url: String,
 
     #[api_model(action = create, nullable)]
     pub description: Option<String>,
@@ -98,11 +100,11 @@ pub struct Artwork {
     pub agit_id: i64,
 
     // Note: if collection_id is 0, it means the artwork is not in any collection
-    #[api_model()]
+    #[api_model(skip)]
     pub collection_id: i64,
 
-    #[api_model(many_to_one = artists)]
-    pub artist_id: i64,
+    #[api_model(summary, many_to_many = artwork_artist, table_name = artists, foreign_primary_key = artist_id, foreign_reference_key = artwork_id)]
+    pub artist: Vec<Artist>,
 
     #[api_model(one_to_many = artwork_user_likes, foreign_key = artwork_id, aggregator = count)]
     pub likes: i64,

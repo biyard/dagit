@@ -1,7 +1,7 @@
 use bdk::prelude::*;
 
 use crate::{
-    components::{button::SecondaryButton, checkbox::CheckBoxWithLabel, input::Input},
+    components::{button::SecondaryButton, checkbox::CheckBoxWithLabel, input::InputWithLabel},
     pages::i18n::UserInfoModalTranslate,
 };
 
@@ -33,7 +33,7 @@ pub fn UserInfoModal(
         div { class: "flex flex-col gap-9",
             h2 { class: "text-sm font-bold", {tr.description} }
             div { class: "flex flex-col gap-5",
-                Input {
+                InputWithLabel {
                     label: tr.name_label,
                     placeholder: tr.name_placeholder,
                     value: nickname(),
@@ -41,7 +41,7 @@ pub fn UserInfoModal(
                         nickname.set(value);
                     },
                 }
-                Input {
+                InputWithLabel {
                     label: tr.email_label,
                     placeholder: tr.email_placeholder,
                     value: email(),

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use bdk::prelude::*;
 
 #[api_model(base = "/v1/artwork_prices", table = artwork_prices)]
@@ -23,4 +25,21 @@ pub enum Currency {
     NaN = 1,
     ETH = 2,
     BTC = 3,
+}
+
+impl FromStr for Currency {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "ETH" => Ok(Currency::ETH),
+            "BTC" => Ok(Currency::BTC),
+            _ => Err(format!("Unknown currency: {}", s)),
+        }
+    }
+}
+impl Currency {
+    pub fn iter() -> impl Iterator<Item = Currency> {
+        [Currency::ETH, Currency::BTC].iter().copied()
+    }
 }

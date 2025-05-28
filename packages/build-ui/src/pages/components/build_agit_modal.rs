@@ -1,7 +1,7 @@
 use bdk::prelude::*;
 
 use crate::{
-    components::{button::SecondaryButton, input::Input},
+    components::{button::SecondaryButton, input::InputWithLabel},
     pages::i18n::BuildAgitModalTranslate,
 };
 
@@ -27,7 +27,7 @@ pub fn BuildAgitModal(on_button_click: EventHandler<BuildAgitResult>, lang: Lang
         div { class: "flex flex-col gap-9",
             h2 { class: "text-sm font-bold", {tr.description} }
             div { class: "flex flex-col gap-5",
-                Input {
+                InputWithLabel {
                     label: tr.name_label,
                     placeholder: tr.name_placeholder,
                     value: name(),
@@ -35,7 +35,7 @@ pub fn BuildAgitModal(on_button_click: EventHandler<BuildAgitResult>, lang: Lang
                         name.set(value);
                     },
                 }
-                Input {
+                InputWithLabel {
                     label: tr.short_label,
                     value: url,
                     on_change: move |_| {},

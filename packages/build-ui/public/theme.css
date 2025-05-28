@@ -1,5 +1,6 @@
 @theme {
-  --color-primary: #30d4a0;
+  --color-error: #ff2990;
+  --color-primary: #1CCB93;
   --color-background: #171717;
   --color-neutral: #282828;
   --color-neutral-70: #AEAAAB;
@@ -8,6 +9,7 @@
   --color-neutral-99: #111111;
   --color-pink: #ff2d55;
   --color-btn-disabled: #171717;
+  --color-bg-hover: #062D21;
   /* Border colors */
   --color-border-primary: #333;
   --color-border-bg: #222;
