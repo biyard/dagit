@@ -7,6 +7,7 @@ pub fn TitleInput(
     on_change: EventHandler<String>,
     on_go_back: EventHandler<()>,
     #[props(default = false)] disabled: bool,
+    #[props(default = false)] error: bool,
 ) -> Element {
     rsx! {
         div { class: "flex gap-2 w-full items-center",
@@ -30,7 +31,8 @@ pub fn TitleInput(
                 }
             }
             input {
-                class: "text-[32px]/[38px] pb-1 font-semibold flex-1 border-b border-white outline-none text-white hover:border-primary focus:border-primary placeholder-neutral-80",
+                class: "text-[32px]/[38px] pb-1 font-semibold flex-1 border-b border-white outline-none text-white hover:border-primary focus:border-primary placeholder-neutral-80 disabled:border-transparent aria-error:border-pink",
+                "aria-error": error,
                 placeholder,
                 value,
                 disabled,

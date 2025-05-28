@@ -8,7 +8,7 @@ use crate::tables::{
     prelude::{ArtworkOwnership, ArtworkPrice},
 };
 
-use super::{ArtStyle, Material, Medium, Rarity, Size, Theme, WaysToSell, Weight};
+use super::{ArtStyle, Material, Medium, Rarity, Royalty, Size, Theme, WaysToSell, Weight};
 #[derive(
     Debug, Clone, Eq, PartialEq, Default, by_macros::ApiModel, dioxus_translate::Translate, Copy,
 )]
@@ -43,23 +43,22 @@ pub struct Artwork {
     // Sale Info
     #[api_model(summary, action = create)]
     pub ways_to_sell: WaysToSell,
-
     #[api_model(summary, action = create, nullable)]
     pub rarity: Option<Rarity>,
     #[api_model(summary, action = create)]
     pub stock: Option<i64>,
-
+    #[api_model(summary, action = create, type = JSONB)]
+    pub royalty: Royalty,
     #[api_model(summary, action = create, action_by_id = update, nullable)]
     pub lockup_started_at: Option<i64>,
     #[api_model(summary, action = create, action_by_id = update, nullable)]
     pub lockup_ended_at: Option<i64>,
 
     // Attributes
+    #[api_model(summary, action = create, type = Integer)]
+    pub medium: Medium,
     #[api_model(summary, action = create, type = JSONB)]
-    pub medium: Vec<Medium>,
-    #[api_model(summary, action = create, type = JSONB)]
-    pub theme: Vec<Theme>,
-
+    pub theme: Theme,
     #[api_model(summary, action = create, type = JSONB)]
     pub art_style: Vec<ArtStyle>,
     #[api_model(summary, action = create, type = JSONB)]

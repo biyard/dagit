@@ -447,3 +447,13 @@ pub enum Weight {
 }
 
 impl core::cmp::Eq for Weight {}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "server", derive(schemars::JsonSchema, aide::OperationIo))]
+pub enum Royalty {
+    #[default]
+    None,
+    Percent(f64),
+}
+
+impl core::cmp::Eq for Royalty {}

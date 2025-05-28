@@ -74,6 +74,21 @@ translate! {
       en:"Year",
       ko:"Year",
    }
+
+
+   art_info:{
+      en:"Art Info",
+      ko:"Art Info",
+   }
+   description:{
+      en:"Description",
+      ko:"Description",
+   }
+   description_placeholder:{
+      en:"Please provide a detailed description of your artwork. Feel free to include its meaning, creative process, materials, and techniques used. It would be wonderful if you could share the story behind your piece.",
+      ko:"Please provide a detailed description of your artwork. Feel free to include its meaning, creative process, materials, and techniques used. It would be wonderful if you could share the story behind your piece.",
+   }
+
    save:{
       en:"Save",
       ko:"저장",
@@ -81,6 +96,10 @@ translate! {
    images:{
       en:"Images",
       ko:"이미지",
+   }
+   back:{
+      en:"Back",
+      ko:"Back",
    }
 
 }

@@ -1,9 +1,18 @@
 #![allow(unused)]
-use bdk::prelude::by_components::icons::arrows::ShapeArrowUp;
-use bdk::prelude::*;
-use common::tables::prelude::{Currency, Medium, Rarity, Theme};
+use std::str::FromStr;
 
-use crate::components::input::Input;
+use bdk::prelude::by_components::icons::arrows::ChevronLeft;
+use bdk::prelude::by_components::icons::{
+    arrows::ChevronRight, arrows::ShapeArrowUp, other_devices::Save,
+};
+use bdk::prelude::dioxus_elements::image;
+use bdk::prelude::serde_json::de;
+use bdk::prelude::*;
+use common::tables::prelude::{
+    ArtStyle, Currency, Material, Medium, Rarity, Royalty, Size, Theme, Weight,
+};
+
+use crate::components::input::{Input, TextArea};
 use crate::components::{button::SecondaryButton, dropdown::DropDown};
 
 use common::tables::artworks::WaysToSell;
@@ -30,6 +39,7 @@ pub fn CreateArtworkPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Elemen
                 on_change: move |value| {
                     title.set(value);
                 },
+                disabled: ctrl.active_tab() != Tab::ItemDetails,
             }
             div { class: "flex flex-col gap-10 h-full overflow-y-scroll",
                 TabHeader {
@@ -44,26 +54,48 @@ pub fn CreateArtworkPage(lang: Language, agit_id: ReadOnlySignal<i64>) -> Elemen
                     ItemDetailTab {
                         lang,
                         on_save: move |result: ItemDetailResult| {
-                            tracing::debug!("Item detail saved: {:?}", result);
+                            ctrl.save_item_detail(title(), result);
                         },
                         on_next: move |_| {
                             tracing::debug!("Next button clicked");
                             ctrl.set_active_tab(Tab::ArtInfo);
                         },
                     }
+                } else if ctrl.active_tab() == Tab::ArtInfo {
+                    ArtInfo {
+                        lang,
+                        on_save: Callback::new(move |(image_url, description)| async move {
+                            let res = ctrl.create_artwork(image_url, description).await;
+                        }),
+                        on_back: move |_| {
+                            ctrl.set_active_tab(Tab::ItemDetails);
+                        },
+                    }
                 }
-            
             }
-        
         }
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Eq, PartialEq, Clone)]
 pub struct ItemDetailResult {
     pub display_name: String,
-    pub stock: String,
-    pub year: String,
+    pub ways_to_sell: WaysToSell,
+    pub rarity: Option<Rarity>,
+    pub stock: Option<i64>,
+    pub price: Currency,
+    pub collection: Option<String>,
+    pub medium: Medium,
+    pub theme: Theme,
+    pub year: i64,
+    pub royalty: Royalty,
+    pub lockup_started_at: Option<i64>,
+    pub lockup_ended_at: Option<i64>,
+    pub art_style: Vec<ArtStyle>,
+    pub material: Vec<Material>,
+    pub color: Vec<String>,
+    pub size: Size,
+    pub weight: Weight,
 }
 #[component]
 fn ItemDetailTab(
@@ -74,12 +106,19 @@ fn ItemDetailTab(
     let tr: CreateArtworkPageTranslate = translate(&lang);
 
     let mut display_name = use_signal(String::default);
+
+    let mut ways_to_sell = use_signal(|| None::<WaysToSell>);
+    let mut rarity = use_signal(|| None::<Rarity>);
     let mut stock = use_signal(String::default);
+    let mut currency = use_signal(|| None::<Currency>);
+
+    let mut medium = use_signal(|| None::<Medium>);
+    let mut theme = use_signal(|| None::<Theme>);
     let mut year = use_signal(String::default);
 
     rsx! {
         div { class: "flex flex-col gap-20",
-            Accordion { label: "Artist Info".to_string(), default_open: true,
+            Accordion { label: tr.artist_info.to_string(),
                 Label {
                     label: "Display Name or Email".to_string(),
                     required: true,
@@ -91,20 +130,24 @@ fn ItemDetailTab(
                                 tracing::debug!("Input changed: {}", v);
                                 display_name.set(v);
                             },
-                        
                         }
                     }
-                
                 }
             }
-            Accordion { label: tr.sale_info.to_string(), default_open: true,
+            Accordion { label: tr.sale_info.to_string(),
                 Label { label: tr.ways_to_sell.to_string(), required: true,
                     DropDown {
                         id: tr.ways_to_sell.to_string(),
                         options: WaysToSell::VARIANTS.iter().map(|v| v.translate(&lang).to_string()).collect(),
                         placeholder: "Select",
-                        onchange: move |selected| {
-                            tracing::debug!("Selected way to sell: {}", selected);
+                        onchange: move |selected: String| {
+                            WaysToSell::from_str(&selected)
+                                .map(|v| {
+                                    ways_to_sell.set(Some(v));
+                                })
+                                .unwrap_or_else(|_| {
+                                    tracing::error!("Failed to parse selected ways to sell: {}", selected);
+                                });
                         },
                     }
                 }
@@ -113,8 +156,14 @@ fn ItemDetailTab(
                         id: tr.rarity.to_string(),
                         options: Rarity::VARIANTS.iter().map(|v| v.translate(&lang).to_string()).collect(),
                         placeholder: "Select",
-                        onchange: move |selected| {
-                            tracing::debug!("Selected rarity: {}", selected);
+                        onchange: move |selected: String| {
+                            Rarity::from_str(&selected)
+                                .map(|v| {
+                                    rarity.set(Some(v));
+                                })
+                                .unwrap_or_else(|_| {
+                                    tracing::error!("Failed to parse selected rarity: {}", selected);
+                                });
                         },
                     }
                 }
@@ -126,29 +175,33 @@ fn ItemDetailTab(
                             tracing::debug!("Input changed: {}", v);
                             stock.set(v);
                         },
-                    
                     }
-                
                 }
                 Label { label: tr.price.to_string(), required: true,
                     DropDown {
                         id: tr.price.to_string(),
                         options: Currency::iter().map(|v| format!("{:?}", v)).collect(),
                         placeholder: "Select",
-                        onchange: move |selected| {
-                            tracing::debug!("Selected price: {}", selected);
+                        onchange: move |selected: String| {
+                            Currency::from_str(&selected)
+                                .map(|v| {
+                                    currency.set(Some(v));
+                                })
+                                .unwrap_or_else(|_| {
+                                    tracing::error!("Failed to parse selected currency: {}", selected);
+                                });
                         },
                     }
                 }
                 Label { label: tr.lock_up_period.to_string() }
             }
-            Accordion { label: tr.attributes.to_string(), default_open: true,
+            Accordion { label: tr.attributes.to_string(),
                 Label { label: tr.collection.to_string(),
                     DropDown {
                         id: tr.collection.to_string(),
                         options: vec![],
                         placeholder: "Select",
-                        onchange: move |selected| {
+                        onchange: move |selected: String| {
                             tracing::debug!("Selected Collection: {}", selected);
                         },
                     }
@@ -158,8 +211,14 @@ fn ItemDetailTab(
                         id: tr.medium.to_string(),
                         options: Medium::VARIANTS.iter().map(|v| v.translate(&lang).to_string()).collect(),
                         placeholder: "Select",
-                        onchange: move |selected| {
-                            tracing::debug!("Selected Medium: {}", selected);
+                        onchange: move |selected: String| {
+                            Medium::from_str(&selected)
+                                .map(|v| {
+                                    medium.set(Some(v));
+                                })
+                                .unwrap_or_else(|_| {
+                                    tracing::error!("Failed to parse selected medium: {}", selected);
+                                });
                         },
                     }
                 }
@@ -168,8 +227,14 @@ fn ItemDetailTab(
                         id: tr.theme.to_string(),
                         options: Theme::VARIANTS.iter().map(|v| v.translate(&lang).to_string()).collect(),
                         placeholder: "Select",
-                        onchange: move |selected| {
-                            tracing::debug!("Selected theme: {}", selected);
+                        onchange: move |selected: String| {
+                            Theme::from_str(&selected)
+                                .map(|v| {
+                                    theme.set(Some(v));
+                                })
+                                .unwrap_or_else(|_| {
+                                    tracing::error!("Failed to parse selected theme: {}", selected);
+                                });
                         },
                     }
                 }
@@ -181,25 +246,97 @@ fn ItemDetailTab(
                             tracing::debug!("year changed: {}", v);
                             year.set(v);
                         },
-                    
                     }
-                
                 }
             }
             div { class: "flex flex-row justify-end gap-5",
                 SecondaryButton {
                     class: "text-white",
                     onclick: move |_| {
-                        on_save.call(ItemDetailResult::default());
+                        on_save
+                            .call(ItemDetailResult {
+                                display_name: display_name(),
+                                ways_to_sell: ways_to_sell().unwrap_or_default(),
+                                rarity: rarity().clone(),
+                                stock: if stock().is_empty() {
+                                    None
+                                } else {
+                                    Some(stock().parse().unwrap_or_default())
+                                },
+                                price: currency().unwrap_or(Currency::ETH),
+                                collection: None,
+                                medium: medium().unwrap_or_default(),
+                                theme: theme().unwrap_or_default(),
+                                year: year().parse().unwrap_or_default(),
+                                ..Default::default()
+                            });
                     },
-                    {tr.save}
+                    div { class: "flex flex-row gap-2.5 w-30",
+                        Save { class: "[&>path]:stroke-white" }
+                        span { class: "flex-1", {tr.save} }
+                    }
                 }
                 SecondaryButton {
                     class: "text-white",
                     onclick: move |_| {
                         on_next.call(());
                     },
-                    {tr.images}
+                    div { class: "flex flex-row gap-2.5 w-30",
+                        span { class: "flex-1", {tr.images} }
+                        ChevronRight { class: "[&>path]:stroke-white" }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn ArtInfo(
+    lang: Language,
+    on_save: EventHandler<(String, Option<String>)>,
+    on_back: EventHandler<()>,
+) -> Element {
+    let tr: CreateArtworkPageTranslate = translate(&Language::default());
+    let mut image_url = use_signal(String::default);
+    let mut description = use_signal(|| None::<String>);
+    rsx! {
+        div { class: "flex flex-col gap-20",
+            Accordion { label: tr.art_info.to_string() }
+            Accordion { label: tr.description.to_string(),
+                textarea {
+                    class: "text-[15px]/[23px] border border-neutral-80 px-4 py-3 outline-none text-white hover:border-primary focus:border-primary aria-invalid:border-pink placeholder-neutral-80 disabled:!border-neutral-80",
+                    placeholder: tr.description_placeholder.to_string(),
+                    value: description(),
+
+                    oninput: move |e| {
+                        tracing::debug!("Description input changed: {}", e.value());
+                        description.set(Some(e.value().clone()));
+                    },
+                }
+            }
+            div { class: "flex flex-row justify-end gap-5",
+                SecondaryButton {
+                    class: "text-white",
+                    onclick: move |_| {
+                        on_back.call(());
+                    },
+                    div { class: "flex flex-row gap-2.5 w-30",
+                        ChevronLeft { class: "[&>path]:stroke-white" }
+                        span { class: "flex-1", {tr.back} }
+
+
+                    }
+                }
+                SecondaryButton {
+                    class: "text-white",
+                    onclick: move |_| {
+                        on_save.call((image_url(), description()));
+                    },
+                    div { class: "flex flex-row gap-2.5 w-30",
+                        Save { class: "[&>path]:stroke-white" }
+                        span { class: "flex-1", {tr.save} }
+                    }
                 }
             }
         }
@@ -209,7 +346,7 @@ fn ItemDetailTab(
 pub fn Accordion(
     label: String,
     #[props(default = VNode::empty())] children: Element,
-    #[props(default = false)] default_open: bool,
+    #[props(default = true)] default_open: bool,
 ) -> Element {
     let mut expand = use_signal(|| default_open);
 
@@ -243,7 +380,6 @@ fn Label(label: String, #[props(default = false)] required: bool, children: Elem
                 {label}
             }
             div { class: "w-55 shrink-0", {children} }
-        
 
         }
     }
